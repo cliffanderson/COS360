@@ -344,9 +344,28 @@ public class CofinFin {
        returns the minimum value in this
 
        **/
+if(this.finite.isEmpty()){
+            if(this.complement == false){
+                throw new ArithmeticException("minimum called for empty receiver");
+            }
+            else{
+                return 0;
+            }
+        }
 
-
-      return -1;
+        else if (this.complement == true){
+            int num = 0;
+            for(int i = 0; i < this.finite.size(); i++){
+                if(!this.finite.contains(num)){
+                    return num;
+                }
+                num++;
+            }
+        }
+        else{
+            return this.finite.first();
+        }
+        return 0;
    }
 
    private static  // so they will all be initialized to null
