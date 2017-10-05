@@ -195,7 +195,7 @@ public class CofinFin {
         else if(this.complement == true && other.complement == true){
             union.complement = true;
             union.finite.addAll(this.finite);
-            union.finite.removeAll(other.finite);
+            union.finite.addAll(other.finite);
         }
         return union;
    }
