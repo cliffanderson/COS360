@@ -178,11 +178,26 @@ public class CofinFin {
       // other;
       // this and other are NOT modified
       CofinFin union = new CofinFin();
-      
-      union.finite.addAll(this.finite);
-      union.finite.addAll(other.finite);
-
-      return union;
+        if(this.complement == false && other.complement == false){
+            union.finite.addAll(this.finite);
+            union.finite.addAll(other.finite);
+        }
+        else if(this.complement == true && other.complement == false){
+            union.complement = true;
+            union.finite.addAll(this.finite);
+            union.finite.removeAll(other.finite);
+        }
+        else if(this.complement == false && other.complement == true){
+            union.complement = true;
+            union.finite.addAll(other.finite);
+            union.finite.removeAll(this.finite);
+        }
+        else if(this.complement == true && other.complement == true){
+            union.complement = true;
+            union.finite.addAll(this.finite);
+            union.finite.removeAll(other.finite);
+        }
+        return union;
    }
 
    public CofinFin intersect(CofinFin other) {
