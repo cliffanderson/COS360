@@ -171,9 +171,12 @@ public class CofinFin {
       // creates and returns a new value that represents the union of this and
       // other;
       // this and other are NOT modified
+      CofinFin union = new CofinFin();
+      
+      union.finite.addAll(this.finite);
+      union.finite.addAll(other.finite);
 
-      return new CofinFin();
-
+      return union;
    }
 
    public CofinFin intersect(CofinFin other) {
