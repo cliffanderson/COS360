@@ -193,9 +193,14 @@ public class CofinFin {
             union.finite.removeAll(this.finite);
         }
         else if(this.complement == true && other.complement == true){
+
             union.complement = true;
-            union.finite.addAll(this.finite);
-            union.finite.addAll(other.finite);
+
+            for(int i : this.finite) {
+                if(other.finite.contains(i)) {
+                    union.finite.add(i);
+                }
+            }
         }
         return union;
    }
