@@ -221,7 +221,7 @@ public class CofinFin {
        CofinFin cofin = new CofinFin(true, array);
 
 
-      return new CofinFin();
+      return cofin;
    }
 
 
