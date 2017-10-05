@@ -215,19 +215,23 @@ public class CofinFin {
       return new CofinFin();
    }
 
+
    public boolean isIn(int n) {
       /****
        YOU NEED TO CODE THIS
+
+        returns false if n < 0 or n is not in the set
+        represented by this
+        else returns true
        ****/
 
+      if(n < 0) return false;
 
-      // returns false if n < 0 or n is not in the set
-      // represented by this
-      // else returns true
+      for(int i : this.finite) {
+          if(n == i) return true;
+      }
 
-      // for the compiler
       return false;
-
    }
 
 
