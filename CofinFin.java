@@ -187,8 +187,12 @@ public class CofinFin {
       // creates and returns a new value that represents the intersection of this and
       // other;
       // this and other are NOT modified
-
-      return new CofinFin();
+      CofinFin intersection = new CofinFin();
+      
+      intersection.finite.addAll(this.finite);
+      intersection.finite.retainAll(other.finite);
+      
+      return intersection;
 
    }
 
