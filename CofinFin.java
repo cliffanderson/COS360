@@ -17,7 +17,7 @@ public class CofinFin {
 
    private static CofinFin emT;
 
-   private boolean complement;
+   private boolean complement = false;
    private TreeSet<Integer> finite; // should never be null, even if
    // the set is empty
 
@@ -251,11 +251,25 @@ public class CofinFin {
 
       if(n < 0) return false;
 
-      for(int i : this.finite) {
-          if(n == i) return true;
-      }
 
-      return false;
+      if(this.complement) {
+
+          if(this.finite.size() == 0) return true;
+
+          for (int i : this.finite) {
+              if (n == i) return false;
+          }
+
+          return true;
+      } else {
+          if(this.finite.size() == 0) return false;
+
+          for (int i : this.finite) {
+              if (n == i) return true;
+          }
+
+          return false;
+      }
    }
 
 
@@ -2685,7 +2699,7 @@ if(this.finite.isEmpty()){
 
 
       ///////////////// IS IN TESTS
-
+//TODO: Marker
       System.out.println("\nisIn Tests\n");
 
       try{
