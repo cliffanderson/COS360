@@ -159,6 +159,13 @@ public class CofinFin {
       /****
        YOU NEED TO CODE THIS
        ****/
+       if(n < 0 || (this.complement == true && !this.finite.contains(n)))
+            return;
+        if(this.complement == true)
+            this.finite.remove(n);
+        else
+            this.finite.add(n);
+        return;
    }
 
    // operations
@@ -275,8 +282,12 @@ public class CofinFin {
        ****/
       // returns true exactly when other and this represent the same set;
       // you can use the isSubsetOf method
-
-      return false;
+       if((this.complement == other.complement) && this.finite.equals(other.finite)){
+            return true;
+        }
+        else{
+            return false;   
+        } 
    }
 
 
@@ -309,9 +320,16 @@ public class CofinFin {
        returns the maximum value in this
 
        **/
-      return -1;
+      if(this.complement == true){
+            throw new ArithmeticException("maximum called for cofinite receiver");
+        }
+        else if((this.complement == false) && (this.finite.isEmpty())){
+            throw new ArithmeticException("maximum called for empty receiver");
+        }
+        else{
 
-
+            return this.finite.last();
+        }
    }
 
    public int minimum() throws Exception{
