@@ -7,12 +7,11 @@ public class CofinFin {
 
 
     Team members:
-
-
-
-
-
-
+        Cliff Anderson
+        Natasha Wrobel
+        Chris Hunter
+        Daniel Fonseca
+        Nick Johnston
     **/
 
 
