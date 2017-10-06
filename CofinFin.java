@@ -278,18 +278,31 @@ public class CofinFin {
       // creates and returns a new value that represents the complement of this;
       // this is NOT modified
 
+
+       CofinFin cofin;
        int[] array = new int[this.finite.size()];
 
-       int index = 0;
-       for(int i : this.finite) {
-           array[index] = i;
-           index++;
+       if(! this.complement) {
+
+           int index = 0;
+           for (int i : this.finite) {
+               array[index] = i;
+               index++;
+           }
+
+           cofin = new CofinFin(true, array);
+       } else {
+
+           int index = 0;
+           for (int i : this.finite) {
+               array[index] = i;
+               index++;
+           }
+
+           cofin = new CofinFin(false, array);
        }
 
-       CofinFin cofin = new CofinFin(true, array);
-
-
-      return cofin;
+       return cofin;
    }
 
 
