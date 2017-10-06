@@ -487,6 +487,7 @@ public class CofinFin {
    }
 
    public int minimum() throws Exception{
+       //System.out.println("Minimum call for " + this.toString());
       /****
        YOU NEED TO CODE THIS
        ****/
@@ -498,8 +499,8 @@ public class CofinFin {
        returns the minimum value in this
 
        **/
-if(this.finite.isEmpty()){
-            if(this.complement == false){
+        if(this.finite.isEmpty()){
+            if(! this.complement){
                 throw new ArithmeticException("minimum called for empty receiver");
             }
             else{
@@ -507,19 +508,18 @@ if(this.finite.isEmpty()){
             }
         }
 
-        else if (this.complement == true){
+        else if (this.complement){
             int num = 0;
-            for(int i = 0; i < this.finite.size(); i++){
-                if(!this.finite.contains(num)){
-                    return num;
-                }
+
+            while(finite.contains(num)) {
                 num++;
             }
+
+            return num;
         }
-        else{
+        else {
             return this.finite.first();
         }
-        return 0;
    }
 
    private static  // so they will all be initialized to null
