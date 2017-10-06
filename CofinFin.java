@@ -207,69 +207,67 @@ public class CofinFin {
 
    public CofinFin intersect(CofinFin other) {
       /****
-       YOU NEED TO CODE THIS
+      YOU NEED TO CODE THIS
        ****/
 
       // creates and returns a new value that represents the intersection of this and
       // other;
       // this and other are NOT modified
-      
-     CofinFin inter = new CofinFin();
-        if(this.complement == false && other.complement == false){
+
+      CofinFin inter = new CofinFin();
+      if(this.complement == false && other.complement == false){
+         inter.finite.addAll(this.finite);
+         inter.finite.retainAll(other.finite);
+
+         return inter;
+      }
+
+      else if(this.complement == true && other.complement == false){
+         if(this.finite.containsAll(other.finite) ){ 
+            return inter;
+         }
+         else if(this.finite.containsAll(other.finite) == false){  
+            inter.finite.addAll(other.finite);
+            return inter;
+         }
+         else{
+            for(int i : other.finite) {
+               if(this.finite.contains(i) == false) {
+                  inter.finite.add(i);
+               }
+            }
+            return inter;
+         }
+      }
+
+      else if(this.complement == false && other.complement == true){
+         if(other.finite.containsAll(this.finite)){
+            return inter;
+         }
+         else if(other.finite.containsAll(this.finite) == false){
             inter.finite.addAll(this.finite);
-            inter.finite.retainAll(other.finite);
-        }
-        
-        else if(this.complement == true && other.complement == false){
-            if(this.finite.containsAll(other.finite) ){ 
-                return inter;
+            return inter;
+         }
+         else{
+            for(int i : this.finite){
+               if(other.finite.contains(i) == false){
+                  inter.finite.add(i);
+               }
             }
-            else if(this.finite.containsAll(other.finite) == false){  
-                inter.finite.addAll(other.finite);
-                return inter;
-            }
-            else{
-                for(int i : other.finite) {
-                    if(this.finite.contains(i) == false) {
-                        inter.finite.add(i);
-                    }
-                }
-                return inter;
-            }
-        }
-        
-        else if(this.complement == false && other.complement == true){
-            if(other.finite.containsAll(this.finite)){
-                return inter;
-            }
-            else if(other.finite.containsAll(this.finite) == false){
-                inter.finite.addAll(this.finite);
-                return inter;
-            }
-            else{
-                for(int i : this.finite){
-                    if(other.finite.contains(i) == false){
-                        inter.finite.add(i);
-                    }
-                }
-                return inter;
-            }
-        }
-        
-        else if(this.complement == true && other.complement == true){
-            if(this.finite.containsAll(other.finite)){
-                inter.complement = true;
-                inter.finite.addAll(this.finite);
-                return inter;
-            }
-            else {
-                inter.complement = true;
-                inter.finite.addAll(this.finite);
-                inter.finite.addAll(other.finite);
-                return inter;
-            }
-        }
-        return inter;
+            return inter;
+         }
+      }
+      else {
+         if(this.finite.size() > other.finite.size()){
+            inter.finite.addAll(this.finite);
+            inter.finite.removeAll(other.finite);
+         }else if(other.finite.size() > this.finite.size()){
+            inter.finite.addAll(other.finite);
+            inter.finite.removeAll(this.finite);
+         } 
+         inter.complement = true;
+         return inter;
+      }
    }
 
    public CofinFin complement() {
