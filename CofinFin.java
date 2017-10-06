@@ -142,13 +142,12 @@ public class CofinFin {
       /****
        YOU NEED TO CODE THIS
        ****/
-      if(n < 0 || (this.complement == true && this.finite.contains(n)))
+      if(n < 0 || (this.complement && this.finite.contains(n)))
          return;
-      if(this.complement == true)
+      if(this.complement)
          this.finite.add(n);
       else
          this.finite.remove(n);
-      return;
    }
 
    public void add(int n) {
@@ -158,13 +157,12 @@ public class CofinFin {
       /****
        YOU NEED TO CODE THIS
        ****/
-       if(n < 0 || (this.complement == true && !this.finite.contains(n)))
+       if(n < 0 || (this.complement && ! this.finite.contains(n)))
             return;
-        if(this.complement == true)
+        if(this.complement)
             this.finite.remove(n);
         else
             this.finite.add(n);
-        return;
    }
 
    // operations
@@ -178,21 +176,21 @@ public class CofinFin {
       // other;
       // this and other are NOT modified
       CofinFin union = new CofinFin();
-        if(this.complement == false && other.complement == false){
+        if(! this.complement && ! other.complement){
             union.finite.addAll(this.finite);
             union.finite.addAll(other.finite);
         }
-        else if(this.complement == true && other.complement == false){
+        else if(this.complement && ! other.complement){
             union.complement = true;
             union.finite.addAll(this.finite);
             union.finite.removeAll(other.finite);
         }
-        else if(this.complement == false && other.complement == true){
+        else if(! this.complement && other.complement){
             union.complement = true;
             union.finite.addAll(other.finite);
             union.finite.removeAll(this.finite);
         }
-        else if(this.complement == true && other.complement == true){
+        else if(this.complement && other.complement){
 
             union.complement = true;
 
@@ -215,21 +213,21 @@ public class CofinFin {
       // this and other are NOT modified
 
       CofinFin inter = new CofinFin();
-      if(this.complement == false && other.complement == false){
+      if(! this.complement && ! other.complement){
          inter.finite.addAll(this.finite);
          inter.finite.retainAll(other.finite);
 
          return inter;
       }
 
-      else if(this.complement == true && other.complement == false){
+      else if(this.complement && ! other.complement){
          if(this.finite.containsAll(other.finite) ){ 
             return inter;
 
          }
          else{
             for(int i : other.finite) {
-               if(this.finite.contains(i) == false) {
+               if(! this.finite.contains(i)) {
                   inter.finite.add(i);
                }
             }
@@ -237,13 +235,13 @@ public class CofinFin {
          }
       }
 
-      else if(this.complement == false && other.complement == true){
+      else if(! this.complement && other.complement){
          if(other.finite.containsAll(this.finite)){
             return inter;
          }
          else{
             for(int i : this.finite){
-               if(other.finite.contains(i) == false){
+               if(! other.finite.contains(i)){
                   inter.finite.add(i);
                }
             }
@@ -477,10 +475,10 @@ public class CofinFin {
        returns the maximum value in this
 
        **/
-      if(this.complement == true){
+      if(this.complement){
             throw new ArithmeticException("maximum called for cofinite receiver");
         }
-        else if((this.complement == false) && (this.finite.isEmpty())){
+        else if((! this.complement) && (this.finite.isEmpty())){
             throw new ArithmeticException("maximum called for empty receiver");
         }
         else{
