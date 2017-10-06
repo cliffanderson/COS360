@@ -225,10 +225,7 @@ public class CofinFin {
       else if(this.complement == true && other.complement == false){
          if(this.finite.containsAll(other.finite) ){ 
             return inter;
-         }
-         else if(this.finite.containsAll(other.finite) == false){  
-            inter.finite.addAll(other.finite);
-            return inter;
+
          }
          else{
             for(int i : other.finite) {
@@ -244,10 +241,6 @@ public class CofinFin {
          if(other.finite.containsAll(this.finite)){
             return inter;
          }
-         else if(other.finite.containsAll(this.finite) == false){
-            inter.finite.addAll(this.finite);
-            return inter;
-         }
          else{
             for(int i : this.finite){
                if(other.finite.contains(i) == false){
@@ -257,14 +250,9 @@ public class CofinFin {
             return inter;
          }
       }
-      else {
-         if(this.finite.size() > other.finite.size()){
-            inter.finite.addAll(this.finite);
-            inter.finite.removeAll(other.finite);
-         }else if(other.finite.size() > this.finite.size()){
-            inter.finite.addAll(other.finite);
-            inter.finite.removeAll(this.finite);
-         } 
+      else { //both compliments
+         inter.finite.addAll(this.finite);
+         inter.finite.addAll(other.finite);
          inter.complement = true;
          return inter;
       }
