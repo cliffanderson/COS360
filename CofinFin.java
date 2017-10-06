@@ -341,6 +341,7 @@ public class CofinFin {
    public boolean isSubsetOf(CofinFin other) {
       /****
        YOU NEED TO CODE THIS
+       Nick will code this!
        ****/
       /*
 
