@@ -213,6 +213,7 @@ public class CofinFin {
       // creates and returns a new value that represents the intersection of this and
       // other;
       // this and other are NOT modified
+      
      CofinFin inter = new CofinFin();
         if(this.complement == false && other.complement == false){
             inter.finite.addAll(this.finite);
