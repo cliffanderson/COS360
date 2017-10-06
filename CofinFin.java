@@ -437,17 +437,22 @@ public class CofinFin {
            }
        }
        else if (other.complement && this.complement) { //If both are comp sets
-           if (other.finite.isEmpty()) { // Real numbers case
+           if (other.finite.isEmpty() && this.finite.isEmpty()){// Both are real numbers case
+               return true;
+           } else if (other.finite.isEmpty() && !this.finite.isEmpty()) { // Real numbers case, makes sure this has non-includes
                return true;
            }
-           Iterator<Integer> itr = this.finite.iterator();
+           if (this.finite.size() <= other.finite.size()) { //this MUST be a larger set if both are compliments
+               return false;
+           }
+           Iterator<Integer> itr = other.finite.iterator();
            while (itr.hasNext()) {
                int i = itr.next();
-               if (!other.finite.contains(i)) {
+               if (!this.finite.contains(i)) {
                    return false;
                }
            }
-
+           return true;
        }
 
    return false;
