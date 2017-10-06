@@ -341,7 +341,6 @@ public class CofinFin {
    public boolean isSubsetOf(CofinFin other) {
       /****
        YOU NEED TO CODE THIS
-       Nick will code this!
        ****/
       /*
 
@@ -349,9 +348,63 @@ public class CofinFin {
          tricky, but it should be doable.
        */
 
-      return false;
+       if (!other.complement && !this.complement) { //If normal sets
+           if (this.finite.size() > other.finite.size()) {
+              return false;
+          }
+          Iterator<Integer> itr = this.finite.iterator();
+          while (itr.hasNext()) {
+              int i = itr.next();
+              if (!other.finite.contains(i)) {
+                  return false;
+              }
+          }
+          return true;
+       }
+       else if (other.complement && !this.complement) { //If other is a comp set and this is not a comp set
+          if (other.finite.isEmpty()) { //Real numbers case
+              return true;
+          } else {
+              Iterator<Integer> itr = this.finite.iterator();
+              while (itr.hasNext()) {
+                  int i = itr.next();
+                  if (other.finite.contains(i)) {
+                      return false;
+                  }
+              }
+              return true;
+          }
+       }
+       else if (!other.complement && this.complement) { //If other is not a comp set and this is a comp set
+           if (this.finite.isEmpty()) { //Real numbers case
+               return false;
+           } else {
+               Iterator<Integer> itr = other.finite.iterator();
+               while (itr.hasNext()) {
+                   int i = itr.next();
+                   if (this.finite.contains(i)) {
+                       return false;
+                   }
+               }
+           }
+       }
+       else if (other.complement && this.complement) { //If both are comp sets
+           if (other.finite.isEmpty()) { // Real numbers case
+               return true;
+           }
+           Iterator<Integer> itr = this.finite.iterator();
+           while (itr.hasNext()) {
+               int i = itr.next();
+               if (!other.finite.contains(i)) {
+                   return false;
+               }
+           }
 
+       }
+
+   return false;
    }
+
 
 
    public int maximum() throws Exception{
