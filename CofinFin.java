@@ -395,7 +395,9 @@ public class CofinFin {
          returns true when this is a subset of other. This might be a little
          tricky, but it should be doable.
        */
-
+       if (this.equals(other)) {
+           return true;
+       }
        if (!other.complement && !this.complement) { //If normal sets
            if (this.finite.size() > other.finite.size()) {
               return false;
