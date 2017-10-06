@@ -278,18 +278,31 @@ public class CofinFin {
       // creates and returns a new value that represents the complement of this;
       // this is NOT modified
 
+
+       CofinFin cofin;
        int[] array = new int[this.finite.size()];
 
-       int index = 0;
-       for(int i : this.finite) {
-           array[index] = i;
-           index++;
+       if(! this.complement) {
+
+           int index = 0;
+           for (int i : this.finite) {
+               array[index] = i;
+               index++;
+           }
+
+           cofin = new CofinFin(true, array);
+       } else {
+
+           int index = 0;
+           for (int i : this.finite) {
+               array[index] = i;
+               index++;
+           }
+
+           cofin = new CofinFin(false, array);
        }
 
-       CofinFin cofin = new CofinFin(true, array);
-
-
-      return cofin;
+       return cofin;
    }
 
 
@@ -489,6 +502,7 @@ public class CofinFin {
    }
 
    public int minimum() throws Exception{
+       //System.out.println("Minimum call for " + this.toString());
       /****
        YOU NEED TO CODE THIS
        ****/
@@ -500,8 +514,8 @@ public class CofinFin {
        returns the minimum value in this
 
        **/
-if(this.finite.isEmpty()){
-            if(this.complement == false){
+        if(this.finite.isEmpty()){
+            if(! this.complement){
                 throw new ArithmeticException("minimum called for empty receiver");
             }
             else{
@@ -509,19 +523,18 @@ if(this.finite.isEmpty()){
             }
         }
 
-        else if (this.complement == true){
+        else if (this.complement){
             int num = 0;
-            for(int i = 0; i < this.finite.size(); i++){
-                if(!this.finite.contains(num)){
-                    return num;
-                }
+
+            while(finite.contains(num)) {
                 num++;
             }
+
+            return num;
         }
-        else{
+        else {
             return this.finite.first();
         }
-        return 0;
    }
 
    private static  // so they will all be initialized to null
