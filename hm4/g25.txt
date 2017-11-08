@@ -1,0 +1,11 @@
+program g25
+
+var
+set s;
+
+begin
+   s := {1};
+   s := -s
+end
+s
+.

@@ -1,0 +1,10 @@
+program g6
+
+var
+set s;
+
+begin
+   s := CMP{1,2,3}
+end
+s
+.

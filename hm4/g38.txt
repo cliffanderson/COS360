@@ -1,0 +1,14 @@
+program g38
+
+var
+set s,t,u,v,w;
+
+begin
+   s := CMP{};
+   t := CMP{};
+   u := CMP{1};
+   v := {};
+   w := s \ t * u \ v
+end
+w
+.

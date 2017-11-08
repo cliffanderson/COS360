@@ -1,0 +1,16 @@
+program g14
+
+var
+set s,t,u,v;
+
+begin
+   s := CMP{1};
+   t := CMP{2};
+   u := CMP{3};
+   v := CMP{4};
+   s := s * t;
+   s := s * u;
+   s := s * v
+end
+s
+.

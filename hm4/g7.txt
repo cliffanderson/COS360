@@ -1,0 +1,12 @@
+program g7
+
+var
+set s,t;
+
+begin
+   s := CMP{1,2,3};
+   t := s;
+   s := {}
+end
+t
+.

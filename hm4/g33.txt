@@ -1,0 +1,14 @@
+program g33
+
+var
+set s,t,u,v,w;
+
+begin
+   s := CMP{};
+   t := CMP{1,2};
+   u := {1,2};
+   v := {1};
+   w := s \ t + u \ v
+end
+w
+.

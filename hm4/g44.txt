@@ -1,0 +1,163 @@
+program g44
+
+var
+
+nat i,j,k;
+
+set w,s,t,v;
+
+begin
+   s := {};
+   t := s;
+   i := 1;
+   w := {1};
+   v := w;
+
+   if 0 in s then
+      t := {1}
+   else
+      t := {25}
+   endif;
+
+   if i in w then
+      s := {0}
+   else
+      s := {24}
+   endif;
+
+   w := w \ w;
+   if 0 in {0,1} then
+      t := t + {3}
+   else
+      t := t + {27}
+   endif;
+
+   if i in CMP{0,1,2,3} then
+      s := s +{2}
+   else
+      s := s + {26}
+   endif;
+
+   if {} <= s then
+      t := t + {5}
+   else
+      t := t + {29}
+   endif;
+
+   if w <= CMP{} then
+      s := s + {4}
+   else
+      s := s + {28}
+   endif;
+
+   if CMP{} <= {0,1} then
+      t := t + {7}
+   else
+      t := t + {31}
+   endif;
+
+   if s <= w then
+      s := s + {6}
+   else
+      s := s + {30}
+   endif;
+
+
+   if {} = s then
+      t := t + {9}
+   else
+      t := t + {33}
+   endif;
+
+   if w = CMP{} then
+      s := s + {8}
+   else
+      s := s + {32}
+   endif;
+
+   if CMP{} = {0,1} then
+      t := t + {11}
+   else
+      t := t + {35}
+   endif;
+
+   if s = w then
+      s := s + {10}
+   else
+      s := s + {34}
+   endif;
+
+   if not 0 in s then
+      t :=  t + {13}
+   else
+      t := t + {37}
+   endif;
+
+   if not i in w then
+      s := s + {12}
+   else
+      s := s + {36}
+   endif;
+
+
+   if not 0 in {0,1} then
+      t := t + {15}
+   else
+      t := t + {39}
+   endif;
+
+   if not i in CMP{0,1,2,3} then
+      s := s +{14}
+   else
+      s := s + {38}
+   endif;
+
+   if not {} <= s then
+      t := t + {17}
+   else
+   endif;
+
+   if not w <= CMP{} then
+   else
+      s := s + {16}
+   endif;
+
+   if not CMP{} <= {0,1} then
+   else
+   endif;
+
+   if not s <= w then
+      s := s + {18}
+   else
+      t := t + {19}
+   endif;
+
+
+   if not {} = s then
+      t := t + {21}
+   else
+      t := t + {41}
+   endif;
+
+   if not w = CMP{} then
+      s := s + {20}
+   else
+      s := s + {40}
+   endif;
+
+   if not CMP{} = {0,1} then
+      t := t + {23}
+   else
+      t := t + {43}
+   endif;
+
+   if not s = w then
+      s := s + {22}
+   else
+      s := s + {42}
+   endif
+
+
+end
+s + t
+.

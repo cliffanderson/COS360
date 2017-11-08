@@ -1,0 +1,7 @@
+program g2
+var
+begin
+end
+CMP{}
+.
+

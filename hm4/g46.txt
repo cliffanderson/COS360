@@ -1,0 +1,155 @@
+program g46
+
+var
+
+set w,s1,s2,s3,first,second,third;
+
+begin
+   w := {};
+   s1 := {};
+   s2 := {0};
+   s3 := {0,1};
+
+   if s3 <= s2 then
+      if s3 <= s1 then
+         first := s3;
+         if s2 <= s1 then
+            second := s2;
+            third := s1
+         else
+            second := s1;
+            third := s2
+         endif
+      else
+         first := s1;
+         second := s3;
+         third := s2
+      endif
+   else
+      if s1 <= s2 then
+         first := s1;
+         second := s2;
+         third := s3
+      else
+         first := s2;
+         if s3 <= s1 then
+            second := s3;
+            third := s1
+         else
+            second := s1;
+            third := s3
+         endif
+      endif
+   endif;
+         
+   w := {};
+
+   if first = s1 then
+      if second = s2 then
+         if third = s3 then
+            w := {123}
+         else if third = s2 then
+            w := {122}
+         else if third = s1 then
+            w := {121}
+              endif
+              endif
+         endif
+      else if second = s3 then
+         if third = s3 then
+            w := {133}
+         else if third = s2 then
+            w := {132}
+         else if third = s1 then
+            w := {131}
+              endif
+              endif
+         endif
+      else if second = s1 then
+         if third = s3 then
+            w := {113}
+         else if third = s2 then
+            w := {112}
+         else if third = s1 then
+            w := {111}
+              endif
+              endif
+         endif
+           endif
+           endif
+      endif
+   else if first = s2 then
+      if second = s2 then
+         if third = s3 then
+            w := {223}
+         else if third = s2 then
+            w := {222}
+         else if third = s1 then
+            w := {221}
+              endif
+              endif
+         endif
+      else if second = s3 then
+         if third = s3 then
+            w := {233}
+         else if third = s2 then
+            w := {232}
+         else if third = s1 then
+            w := {231}
+              endif
+              endif
+         endif
+      else if second = s1 then
+         if third = s3 then
+            w := {213}
+         else if third = s2 then
+            w := {212}
+         else if third = s1 then
+            w := {211}
+              endif
+              endif
+         endif
+           endif
+           endif
+      endif
+   else if first = s3 then
+      if second = s2 then
+         if third = s3 then
+            w := {323}
+         else if third = s2 then
+            w := {322}
+         else if third = s1 then
+            w := {321}
+              endif
+              endif
+         endif
+      else if second = s3 then
+         if third = s3 then
+            w := {333}
+         else if third = s2 then
+            w := {332}
+         else if third = s1 then
+            w := {331}
+              endif
+              endif
+         endif
+      else if second = s1 then
+         if third = s3 then
+            w := {313}
+         else if third = s2 then
+            w := {312}
+         else if third = s1 then
+            w := {311}
+              endif
+              endif
+         endif
+           endif
+           endif
+      endif
+        endif
+        endif
+   endif
+
+end
+w
+.

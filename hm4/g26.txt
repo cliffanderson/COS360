@@ -1,0 +1,11 @@
+program g26
+
+var
+set s;
+
+begin
+   s := CMP{1};
+   s := -s
+end
+s
+.

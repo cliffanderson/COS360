@@ -1,0 +1,10 @@
+program g3
+
+var
+set s;
+
+begin
+   s := {1}
+end
+s
+.

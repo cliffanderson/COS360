@@ -1,0 +1,7 @@
+program g1
+var
+begin
+end
+{}
+.
+

@@ -1,0 +1,12 @@
+program g34
+
+var
+set s,u,w;
+
+begin
+   s := CMP{};
+   u := {1,2};
+   w := - s + u
+end
+w
+.

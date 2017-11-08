@@ -1,0 +1,101 @@
+program g43
+
+var
+
+nat i,j,k;
+
+set w,s,t,v;
+
+begin
+   s := {};
+   t := s;
+   i := 1;
+   w := {1};
+   v := w;
+
+   if 0 in s then
+      t := {1}
+   endif;
+   if i in w then
+      s := {0}
+   endif;
+   w := w \ w;
+   if 0 in {0,1} then
+      t := t + {3}
+   endif;
+   if i in CMP{0,1,2,3} then
+      s := s +{2}
+   endif;
+
+   if {} <= s then
+      t := t + {5}
+   endif;
+   if w <= CMP{} then
+      s := s + {4}
+   endif;
+   if CMP{} <= {0,1} then
+      t := t + {7}
+   endif;
+   if s <= w then
+      s := s + {6}
+   endif;
+
+
+   if {} = s then
+      t := t + {9}
+   endif;
+   if w = CMP{} then
+      s := s + {8}
+   endif;
+   if CMP{} = {0,1} then
+      t := t + {11}
+   endif;
+   if s = w then
+      s := s + {10}
+   endif;
+
+   if not 0 in s then
+      t :=  t + {13}
+   endif;
+   if not i in w then
+      s := s + {12}
+   endif;
+   w := w \ w;
+   if not 0 in {0,1} then
+      t := t + {15}
+   endif;
+   if not i in CMP{0,1,2,3} then
+      s := s +{14}
+   endif;
+
+   if not {} <= s then
+      t := t + {17}
+   endif;
+   if not w <= CMP{} then
+      s := s + {16}
+   endif;
+   if not CMP{} <= {0,1} then
+      t := t + {19}
+   endif;
+   if not s <= w then
+      s := s + {18}
+   endif;
+
+
+   if not {} = s then
+      t := t + {21}
+   endif;
+   if not w = CMP{} then
+      s := s + {20}
+   endif;
+   if not CMP{} = {0,1} then
+      t := t + {23}
+   endif;
+   if not s = w then
+      s := s + {22}
+   endif
+
+
+end
+s + t
+.

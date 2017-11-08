@@ -1,0 +1,10 @@
+program g4
+
+var
+set s;
+
+begin
+   s := CMP{1}
+end
+s
+.

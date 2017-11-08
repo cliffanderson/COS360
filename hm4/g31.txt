@@ -1,0 +1,13 @@
+program g31
+
+var
+set s,t,u,v;
+
+begin
+   s := {1,2,3};
+   t := {2,3,4};
+   u := {4,5};
+   v := s \ t + u
+end
+v
+.

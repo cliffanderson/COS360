@@ -1,0 +1,867 @@
+COS 360   Homework Exercise #4
+
+Terminals, Grammar Rules, and Error Messages
+
+This brings together in a more compressed format the terminals for the
+language, the grammar rules with lookahead sets, and the specification 
+of the error messages that the translator should generate.
+
+I also put in some suggestions for translation.
+
+I. Terminals
+
+columns below are
+
+Token type  string/pattern  some discussion; 
+
+Note that the Token name is also the public static identifier from the 
+Token class for the int value that use to give its type.
+
+PROGRAM  "program"  a reserved word, the first word of any 
+                    valid program
+ID             [a-zA-Z][a-zA-Z0-9]* except for reserved words;
+                                    identifiers must be declared to be either
+                                    a set type or a natural number type, and
+                                    when you see the declarations you will record
+                                    the declared type in a symbol table that the
+                                    translator uses for type checking; the language
+                                    is case sensitive, so as identifiers, xyz, Xyz,
+                                    xYz, and xyZ are all distinct.
+VAR            "var"      a reserved word
+BEGIN          "begin"    a reserved word
+END            "end"      a reserved word
+IF             "if"       a reserved word
+ELSE           "else"     a reserved word
+ENDIF          "endif"    a reserved word
+NAT            "nat"      a reserved word
+SET            "set"      a reserved word
+NATCONST       0|[1-9][0-9]*  a string for a nonnegative literal
+                              with no extraneous leading 0's
+LEFTBRACE      '{'
+RIGHTBRACE     '}'
+LEFTPAREN      '('
+RIGHTPAREN     ')'
+SEMICOLON      ';'
+PERIOD         '.'
+COMMA          ','
+ASSIGN         ":="  for assignment
+SUBSET         "<="  for is subset of; a comparison operator for sets
+EQUALS         '='   for equality comparisons of sets
+NOT            "not" for boolean negation; so "not" is reserved
+INTERSECTION   '*'   for set intersection, a binary set
+                     operator
+UNION          '+'   for set union, a binary set operator
+SETDIFFERENCE  '\'   for set difference, a binary set operator
+COMPLEMENT     '-'   for unary set complement
+IS_IN          "in"  for set membership; so "in" is reserved
+THEN           "then"    a reserved word
+CMP            "CMP"      a reserved word for the cofinite literals
+UNRECOGNIZED   for anything else, so the lexical analyzer can
+               signal the parser that it encountered something 
+               invalid
+EOF            a special token that the lexical analyzer sends when it has 
+               encountered the end of file
+
+There is more in Token.java
+
+
+
+II. Grammar Rules with Lookahead Sets and Some Suggestions
+
+"" is used in the rules for the empty string.  The only nullable variables in 
+the grammar are
+
+<nat dec>, <set dec>, <st list>, <nat list>
+
+to accommodate empty lists.
+
+
+I put // comments below the rule indicating the lookaheads.  If there is more 
+than one rhs, the lookahead sets for each are separated by semicolons.  In 
+some cases I just put "same" if the lookahead set for the second alternative is
+the same as for the first. In some cases there is a lengthier explication of a 
+feature.
+
+The semantics is as for an imperative programming language for
+CofinFin set values with these operators.  The overall program has
+a declaration part, a computation part, and an output part.  The
+declaration part declares variables of type nat or set.  A variable
+can only be declared at most once.  The computation part may have
+assignment and if statements.  The set expression operators are 
+intersection(*), union(+), set difference(\), and set complement(-).
+Set literals are of the pattern (CMP)? { (N (, N)*)? }  with ws
+allowed between any of the tokens CMP, COMMA, LEFTBRACE, RIGHTBRACE,
+or NATCONST.  There are no arithmetic operators, so nat values are
+derived from variables and constants.  Test expressions for if are
+one of three forms
+
+natValue in setExp
+setExp1 <= setExp2
+setExp1 = setExp2
+
+The output part has a single set expression, and the value of 
+that expression should be printed by the target program of the
+translation.
+
+The goal is to translate the source code into a Java class
+definition of the same name as the identifer after the reserved 
+word program that will execute the corresponding CofinFin operations
+to realize the computation in the main method and call the toString
+method of an object whose value is what the value of the output
+expression would be.
+
+You will need to have a symbol table to record the declarations
+given in the source program.
+
+and it's convenient to dynamically declare temporary variables.
+Java identifiers allow a leading dollar sign($), but the variables
+of this language does not, so temporaries can use a leading $ to
+be sure not to clash with program variables.  It's very useful to
+maintain some int counter for the most recently generated temp variable,
+lastVar, say, and then the next temp can be given the name
+
+"$" + ++lastVar;
+
+I use a semicolon to mark the last replacement for a variable;
+it is NOT part of the replacement.
+
+For some of the rules, I put suggestions on how to handle them in 
+/* ... */ comments below the lookaheads for the rule.
+
+
+<program> ::= PROGRAM ID VAR <dec> BEGIN <st list> END <out>;
+
+// PROGRAM
+/*
+
+The translation should create a Java class
+
+
+public class s{
+// ... 
+}
+
+where s is the ID after PROGRAM.  The declared variables from the source
+lead to static int declarations, and static CofinFin declarations.
+For example
+
+
+program p 
+var
+   nat i,j,k;
+   set s,t,u;
+begin
+end 
+{}
+.
+
+should lead to
+
+public class p{
+
+private static int i;
+private static int j;
+private static int k;
+
+private static CofinFin s = new CofinFin();
+private static CofinFin t = new CofinFin();
+private static CofinFin u = new CofinFin();
+// ...
+
+The translator will need a symbol table to record what variables have been
+declared in the source program and what types they were declared to have.
+
+Where you have assignment statements to variables, you use Java assignment,
+which may require you to declare additional temporary set variables.  These
+easiest thing to do is maintain an integer counter, and bump it up every time
+you need a new temp variable, then use "$" + counterValue  to obtain a variable
+name that differs from any name in the source code.  We say more about this below
+in the rule for expressions.
+
+For the <out> part, you need to know what of your target program variables
+holds the result of its evalution, say its $res.  Then you can call
+
+System.out.println($res.toString());
+
+as the last statement of the target program's main method.
+
+In predictive parsing, each grammar variable has a method, and in a successful
+parse, a call to a grammar variable will consume exactly what substree of the 
+parse tree rooted by that call has for a yield in the parse tree.  You code up
+the method to accomplish various tasks, such as adding entries to the symbol
+table, emitting code to evaluate an expression, etc.
+
+I'll look at a few of the rules below and suggest some approaches.
+
+*/
+
+<dec> ::= <nat dec> <set dec>;
+
+// NAT, SET, BEGIN
+
+<nat dec> ::= "" | NAT <ne var list> SEMICOLON ;
+
+// SET,BEGIN; NAT
+
+<set dec> ::=  "" | SET <ne var list> SEMICOLON ;
+
+// BEGIN; SET
+
+<ne var list> ::= ID | ID COMMA <ne var list>;
+
+// ID; same
+
+/*
+
+ You can use Arden's lemma and a regular expression
+ identity here to reduce to a single rhs
+ ID (COMMA ID)*
+
+ You can use a global variable in the translator that tells you
+ whether you are in the <nat dec> or <set dec> and process these
+ identifiers as you see them.  Roughly, it could go like this
+
+ if processing nat decs {
+    install ID in the symbol table as a nat
+    emit "private static int currToken.getTokenString();" to the target file;
+    consume the token
+    while (lookahead is COMMA){
+       consume the token;
+       if lookahead is not ID
+          throw the exception with the right error message
+       else{
+          get ID
+          if it's already declared 
+             throw the exception with the right error message
+          else{
+             install in the symbol table as a nat
+             emit "private static int currToken.getTokenString();" to the target file;
+             consume the token
+          }
+       }
+    }
+    change the global variable for processing declarations to set
+ }
+ else{ // processing the set decs
+    check if ID has been declared as a nat
+    if yes
+       throw the exception with the right error message
+    else{
+       install in symbol table as set
+       emit "private static CofinFin currToken.getTokenString() = new CofinFin();" to the target file;
+       consume the token;
+       while (lookahead is COMMA){
+          // like for nat dec's but you have a third error possibility: previously declared
+          // as a nat
+       }
+    }
+ }
+
+*/
+
+  
+
+<st list> ::= "" | <ne st list>;
+
+// ELSE,ENDIF,END; ID,IF
+/*
+
+Note, depending on the context of the <st list>,  the first rhs
+would need a different lookahead, but for simplicity, you do not
+need to vary the lookahead set for <st list>.  A program like
+
+program p
+var
+begin
+<=
+
+will lead to an error message
+
+[line 4]: identifier, "end", "if", "else" or "endif" expected.
+
+because the <= is not in the set of lookaheads for <st list>, but the program
+
+program p
+var
+begin
+else
+
+will lead to an error message
+
+[line 4]: "end" expected.
+
+because the else is an adequate lookahead for the <st list> grammar variable,
+so the <st list> method completes w/o error.  The error comes when the else does not match
+the END token that should follow a <st list>.  The else token would not 
+really be acceptable, but we would have to change the grammar to catch this.
+
+I don't want you to bother to distinguish those contexts.  There are public
+static TreeSet<Integer> variables for most of the grammar variables that are
+loaded with all of the lookaheads that would be possible for that variable.
+Before you invoke the method for the variable, test that the lookahead is in
+that set, and if it is not, then that should be used to give you a list of the
+tokens that would be expected.  It is easy to write a method that can take
+the lookahead token, the set of allowable tokens, and construct the right
+error message.
+
+*/
+
+<ne st list> ::=  <st> |  <st>  SEMICOLON <ne st list>;
+
+// ID,IF; ID,IF
+// Again, Arden's lemma and a regular expression identity
+// can reduce this to a single rhs, <st> (SEMICOLON <st>)*
+
+
+<st> ::= <asgn> | <if> ;
+
+// ID; IF
+
+<asgn> ::= <set asgn> | <nat asgn>; 
+
+// ID; ID
+/*
+
+You need to look up the identifier to determine which rhs to call,
+and that lookup could also generate the error
+
+[line n] identifier ID.getTokenString() is not declared.
+
+
+*/
+
+<set asgn> ::= ID ASSIGN <set exp>
+
+// ID
+
+<set exp> ::= <set exp> SETDIFFERENCE <set level 2> | <set level 2>;
+
+// ID, LEFTBRACE, LEFTPAREN, COMPLEMENT, CMP; same
+// Arden again;
+// convert this to   <set level 2> (SETDIFFERENCE <set level 2>)*
+
+/*
+
+There are a lot of different ways you can do this, but here's one way that
+works.  For each priority level, the translator can have a String
+variable that indicates what variable in the target program holds the
+value of the the expression of that level.  So for this level we
+need 
+
+private static String setExpResultVariable;
+
+As the subexpressions evaluate, the variable of the current level determines
+whether it needs a new temp variable, or can reuse the subexpression variable
+to hold its result, and generates the code to evaluate the subexpression at its
+level.  It leaves the name of the variable in the target code that holds the
+result before it exits.
+ 
+
+setexp(){
+
+  // we are assuming that the lookahead is right for <set exp>
+  String res; // to name the variable that holds the result of
+              // the subtree
+
+  setlevel2();
+
+  // we are either processing a single <set level 2> expression or a list of 
+  // them separated by the set difference operator  (((sl2 \ sl2) \ sl2) \ ... )\ sl2
+  // if the variable is a source code variable and we do have some set difference
+  // operators, we will need to use a temp variable since we can't overwrite the program
+  // variable while evaluating an expression.  Otherwise, we can just use the setLevel2ResultVariable
+
+  if setLevel2ResultVariable does not begin with '$' and lookahead is SETDIFFERENCE{
+     // that means it's a program variable and we will have to do a set difference operation
+     res = get a temp variable;
+     emit code "CofinFin " + res + " = " + setLevel2ResultVariable + ";\n"; for the declaration
+     and initialization
+  }
+  else
+     res = setLevel2ResultVariable
+
+  while (lookahead is SETDIFFERENCE){
+     consume the token;
+     if (lookahead in setLevel2Set){
+        setlevel2();
+        emit the code for  res = res.setDifference(setLevel2ResultVariable);
+     }
+     else
+        throw exception with right error message
+  }
+  // establish where the result is held
+  setExpResultVariable = res;
+
+}
+
+There are some other things that you can do to suppress generating more temp variables than you
+need.  First, every time the assignment or if test expressions are completed evaluated, all previously
+declared temp variables are reusable, so maintaining a count of how many have been generated and what
+the highest numbered one that is still being used enables you to reuse a temp that is <= the max declaration
+value, but > the highest value in use.
+
+There is a wrinkle in that if a temp declaration occurred with the code generated for a branch of an
+if statement, it would not visible outside that branch.  This can be dealt with by maintaining a 
+stack of max declaration values.  If we enter a branch of an if, we push the value onto the stack,
+and within the branch continue to declare as we need to, since temp variables declared outside the branch
+will be visible.  When we leave a branch, we pop to stack to obtain the max declaration value that was in
+effect before we entered the branch.
+
+Of course, if you are reusing a temp that has been declared, the emitted code for the initial
+value is simply  res + " = " + setLevel2ResultVariable + ";\n"; 
+because it has already been declared.
+
+*/
+<set level 2> ::= <set level 2> UNION <set level 1> | <set level 1>;
+
+// ID, LEFTBRACE, LEFTPAREN, COMPLEMENT, CMP; same
+// Arden again
+
+<set level 1> ::= <set level 1> INTERSECTION <set level 0> | <set level 0>;
+
+// ID, LEFTBRACE, LEFTPAREN, COMPLEMENT, CMP; same
+// Arden again
+
+<set level 0> = COMPLEMENT <set level 0> | <set atomic>
+
+// COMPLEMENT; ID, LEFTBRACE, LEFTPAREN, CMP
+// you can use Arden here, too, though the lookahead sets are disjoint;
+// it allows you to avoid the recursive call to count the occurrences
+// of COMPLEMENT
+
+<set atomic> ::= ID | <set const> | LEFTPAREN <set exp> RIGHTPAREN;
+
+// ID; LEFTBRACE, CMP; LEFTPAREN
+
+<set const> ::= <complemented> | <set literal>;
+
+// CMP; LEFTBRACE
+
+<complemented> ::= CMP <set literal>;
+
+// CMP
+
+<set literal> ::= LEFTBRACE <nat list> RIGHTBRACE;
+
+// LEFTBRACE
+/*
+
+you should construct a string
+
+new int[] { s  }
+
+where s is comma separated list of the integers in nat.  The
+translator could have a global variable,
+
+static private String setLiteralString;
+
+to hold it.  <nat list> is only used here, so the method for
+that <nat list> variable can use a StringBuilder to iterate over the
+list of integers and then convert the builder's value to
+String in setLiteralString, to hold something like "{ 7, 3, 2}"
+"{}".  Then the code in the higher up methods, <set literal>,
+for example, can add material to make "new int[] { 7, 3, 2 }",
+and  <set const> can determine from the lookahead whether it needs
+to construct "(new CofinFin(true, new int[] { 7, 3, 2 })" or
+"(new CofinFin(true, new int[] { 7, 3, 2 })", and put the string in 
+a global variable
+
+String setConstString;
+
+The idea is have each level of expression grammar variable have with the
+translator its own String variable that tells what target program variable
+carries the result of evaluation for that level.
+
+Suppose we have
+
+private static String setAtomicResultVariable;
+
+The set atomic replacements are
+
+<set atomic> ::= ID | <set const> | LEFTPAREN <set exp> RIGHTPAREN;
+
+if we already know that the lookahead fits one of those we can process it roughly
+as follows
+
+setatomic(){
+
+   if lookahead is ID 
+      if the ID is declared as a nat
+         throw exception with right error message
+      else if ID is not declared at all
+         throw exception with right error message
+      else{
+         setAtomicResultVariable = ID's tokenString;
+         consume the token;
+      }
+   else if lookahead is LEFTPAREN{
+      consume the token;
+      if lookahead is in setExpSet{
+         setexp();
+         if lookahead is RIGHTPAREN{
+            consume the token
+            setAtomicResultVariable = sexExpResultVariable;
+         }
+         else
+            throw an exception with error message for RIGHTPAREN
+      }
+      else
+         throw exception with right error message
+   }
+   else{ // must be <set const>
+      setconst();
+      get the next temp variable in some local string temp;
+      emit code "CofinFin " + temp + " = +" +  setConstString + ";\n";
+      setAtomicResultVariable = temp;
+   }
+}
+
+That way the other levels will know what variable holds the result
+of the subexpression.
+
+Look at discussion at <set exp>, too.
+
+*/
+
+<nat list> ::=  "" | <ne nat list>;
+
+// RIGHTBRACE; NATCONST
+
+<ne nat list> ::=  NATCONST | NATCONST COMMA <ne nat list>;
+
+// NATCONST; NATCONST
+// use Arden and the regular expression identity (ab)*a = a(ba)*
+// to eliminate the recursion;
+// it won't hurt here because COMMA is just a separator, not a 
+// right associative binary operator.
+
+<nat asgn> ::= ID ASSIGN <nat exp>;
+
+// ID
+
+<nat exp> ::= ID | NATCONST;  // no arithmetic operators
+
+// ID; NATCONST
+
+<test>  ::=   NOT <test> | <test atomic>;
+
+// NOT; ID, LEFTBRACE, LEFTPAREN, COMPLEMENT, CMP, NATCONST
+
+<test atomic> ::= <set exp> <set test suffix> | <nat exp> IS_IN <set exp> ;
+/*
+
+The overlap is of the two replacements is ID, so you would need to look it 
+up in the symbol table to see which rhs to use, and the error message
+
+[line n] identifier ID.getTokenstring() is not declared.
+
+is again a possibility.
+
+*/
+// ID, LEFTBRACE, LEFTPAREN, COMPLEMENT, CMP; ID, NATCONST
+
+<set test suffix> ::= EQUALS <set exp> | SUBSET <set exp> 
+
+// EQUALS; SUBSET
+
+<if> ::= <if prefix> <if suffix>;
+
+// IF
+
+/*
+
+The grammar rules relevant to the if statement are
+
+<if> ::= <if prefix> <if suffix>;
+<if prefix> ::= IF <test> THEN <st list>;
+<if suffix> ::= ENDIF | ELSE <st list> ENDIF;
+<test>  ::=   NOT <test> | <test atomic>;
+<test atomic> ::= <set exp> <set test suffix> | <nat exp> IS_IN <set exp> ;
+<set test suffix> ::= EQUALS <set exp> | SUBSET <set exp> 
+
+Although the boolean negation, NOT, can be iterated, that is the only
+boolean operator, and the three atomic tests are
+
+   setVar.equals(setVar)
+
+   setVar.isSubsetOf(setVar)
+
+   setVar.isIn(natExp)
+
+Since the set expressions can be arbitrarily complicated, you should evaluate
+them into result variables BEFORE actually emitting the code, 
+You can use global String variables in the translator to indicate which 
+variables in the target program code should be used for the expressions of the
+test, a global variable to indicated whether the test should be negated, and
+a global variable to indicate which one of the three should be used.  Since the
+natExp is either a variable or a constant, just a global String variable for
+it will enable the translator to emit the right expression.
+
+The lookahead sets for the two rhs's of <test atomic> overlap with ID, so you
+will need to like it up in the symbol table to see whether it is a <nat exp> or
+the beginning of a <setp exp>.  Of course, it may not be declared at all, which
+is an error, but if it is declared that is enough to determine which replacement
+will be attempted.
+
+We won't go into great detail on how to handle these, but here are some
+things to bear in mind.  You should be able to adapt the approaches used
+for the other parts of the language to dealing with the if statements.
+
+1. the code to evaluate any set expressions that occur in the test should
+   be emitted prior to the actual if (test) of the emitted Java statement,
+   during the processing of the <set exp> grammar variable.
+
+
+2. if the atomic test is negated an odd number of times, a '!' can be added 
+   to the front of testAtomicCodeString to get testString, otherwise testString
+   is just the same as testAtomicString.
+
+3. the emitted code for <if prefix> should be structured
+
+   code to evaluate the expressions occurring in the test
+   if (testString){
+      code for <st list>
+   }
+
+4. the emitted code for the ENDIF variation of <if suffix> is nothing, if you emit
+   to } in the processing of ifprefix()
+
+5. the emitted code for the other alternative of <if suffix> is
+   
+   else{
+      code for <st list>
+   }
+
+6. because variables declared in nested scopes will not be visible outside
+   of those scopes, you will need to maintain a stack to hold what the last temp
+   variable number was in the containing scope, if you are reusing temp variables.
+   
+*/
+
+
+
+<if prefix> ::= IF <test> THEN <st list>;
+
+// IF
+
+<if suffix> ::= ENDIF | ELSE <st list> ENDIF;
+
+// ENDIF; ELSE
+
+<out> ::= <set exp> PERIOD;
+
+// ID, LEFTBRACE, LEFTPAREN, COMPLEMENT, CMP
+
+
+
+III. Error Messages
+
+
+There are three general types of error messages.  All should be handled
+by throwing an exception with a message
+
+[line ln]: message
+
+with ln the line number of the token that revealed the error, whether it
+had been consumed or is still the lookahead.
+
+The three types are distinguished by the events that lead to their discovery
+
+1. the need to call a grammar variable's method;  We will assume that prior
+   to calling any method for a grammar variable, you have already tested that
+   the lookahead IS in the union of the rhs's for that variable, so inside
+   the method, you determine WHICH rhs to pursue.  Let's say it has structure
+
+   X1 X2 ... XN
+
+   each Xi is either a terminal or a grammar variable.  As you process left
+   to write, terminal requires a match on the lookahead, and a failure to match
+   would be an occasion for the next kind of error.  On the other hand, as in
+   the rule
+
+   <set literal> ::= LEFTBRACE <nat list> RIGHTBRACE;
+
+   the lookahead might match the LEFTBRACE, so you consume and you want to call
+   the method for <nat list>, but the next token is Token.IF, which is not
+   in the lookahead set for that grammar variable.  What I want you to do is
+   BEFORE actually calling the method for the grammar variable, you test if
+   the lookahead is in the set for that grammar variable.  The Token class has
+   TreeSet<Integer> variables for the grammar variables' lookahead sets, and it
+   initializes them, to you just do something like
+
+   if (Token.natListSet.contains(currToken.getTokenType()))
+      natlist();
+   else
+      throw the exception with the appropriate error message
+
+   The error message will be
+
+   [line ln]: m
+
+   where m will one of three forms, depending on how many tokens are in the
+   lookahead set for the variable.  If it's one, then, just that token name,
+   for example, for <program>
+
+   "program" expected.
+
+   If it has two, as for <if suffix>, then 
+
+   "else" or "endif" expected.
+
+   More than two should be listed serially, as for example, <dec>
+
+   "begin", "nat" or "set" expected.
+
+   You should use the names given in Token.TOKEN_LABELS, and list them in
+   order from the TreeSet<Integer> for the grammar variable, which uses the
+   int tokenType to order them.
+
+   Before ANY call to the grammar variable's method, you should test that the
+   lookahead is in its set, and if not, throw an Exception with the appropriate
+   error message.
+
+2. the need to match the current lookahead with a specific token(terminal)
+
+   Here you are committed to some rhs 
+
+   X1 X2 ... Xn
+
+   and are processing Xi a terminal and the lookahead does not match. The
+   message should be like what a singleton set produces for a grammar 
+   variable
+
+   [line ln]: tokenLabelOftheSpecificToken expected.
+
+   For example, the rule
+
+   <if prefix> ::= IF <test> THEN <st list>;
+
+   If we had consumed the IF, called test(), and it returned w/o throwing
+   an exception, we should next match THEN.  If the next lookahead was not
+   THEN, we would want the error message to be
+
+   [line ln]: "then" expected.
+
+
+3. the need to install or look up an identifier in the symbol table
+
+
+   There are six distinct situations in which something could go wrong.
+   The current token is an identifier and one of the conditions of the
+   following list happens.  I have left of the initial "[line ln]: ", 
+   just because it is the same in each(and should have the line number
+   for the identifier).  Also, my examples will use the specific offending
+   identifiers.  Your code will have to use the lookahead's getTokenString
+   method to obtain it.
+
+a. duplicate nat variable declaration
+
+program p
+   var
+      nat cat, cat;
+begin
+end
+{}
+.
+
+would generate an error message
+
+[line 3] cat is a duplicate nat variable declaration.
+
+
+a. a duplicate nat variable declaration, e.g.,
+
+   nat i,j,i;
+
+i is a duplicate nat variable declaration.
+
+b. a set variable declaration duplicates a nat variable declaration
+
+   nat i,j,i;
+   set j;
+
+identifier j is previously declared as nat.
+
+c. a duplicate set variable declaration
+
+   set t,t;
+
+t is a duplicate set variable declaration.
+
+d. an identifier is not declared
+
+   program p
+   var
+   begin
+      t := {}
+   end
+   {}
+   .
+
+identifier t is not declared.
+
+e. a nat variable is used in a context that requires a set expression,
+   for example, the first assignment statement would lead to an error.
+
+   nat i;
+   set t;
+
+   begin
+      t := i;
+      if t <= i then
+      endif;
+      if i in i then
+      endif;
+      if t = i then
+      endif
+
+
+identifier i is declared as nat.
+
+f. a set variable is used where a nat expression is called for, e.g.,
+   the assignment statement
+
+   nat i;
+   set t;
+   begin
+      i := t;
+
+
+identifier t is declared as set.
+
+Generally, you should add the "[line ln]: " text to the beginning of
+those messages, and use for ln the getLineNumber() result from the token
+that revealed the error, whether it has been consumed or is still the
+lookahead token. 
+
+If an exception is thrown, that ends the parse, though it may be useful 
+during development to catch the exception and show what the next token
+would be.
+
+Your program should throw the exception, catch it, and write the message
+to System.err, which is standard error.  My translator's main method is,
+roughly,
+
+         
+      // set up the scanner object, lex then
+      tk = lex.lookahead();
+
+      if (tk.getTokenType() != Token.PROGRAM)
+         throwException(tk.getLineNum(), Token.PROGRAM);
+      else  // call the method for the start symbol, program
+         program();
+      outf.close();
+   }
+   catch (Exception e){
+      System.err.println(e.getMessage());
+      // if the target file was created, close it;
+      // this was more for development, however;
+      if (outf != null){
+         outf.close();
+   }
+
+You should be trying to match the error messages my solution produces.
+
+
+
+

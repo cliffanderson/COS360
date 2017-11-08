@@ -1,0 +1,13 @@
+program g35
+var
+set s,t,u,v,w;
+
+begin
+   s := CMP{};
+   t := {1};
+   u := CMP{1,2};
+   v := {1};
+   w := -s + t + -u + v
+end
+w
+.

@@ -1,0 +1,111 @@
+program g45
+
+var
+
+nat i,j,k;
+
+set w,s,t,v,tt,ss;
+
+begin
+   w := {};
+   v := CMP{};
+   t := -CMP{0,2,4,6,8,10}\CMP{}+ {}*{0,4,10 };
+   s := CMP{} * {0,1,2,3,4,5,30,31}\t+{0,1,2,3,4,5,6,7,8,9,10}*CMP{0,1,2,3,4,5};
+
+   ss := {};
+   tt := ss;
+   i := 1;
+   w := {1};
+   v := w;
+
+   if 0 in    s * t + {} \ s + CMP{} \ {} + {1,2,3} * CMP{} \ {} \ -s * -t + -{} +
+   w * s \ t \ v + s + t * v * s * t then
+      tt := {1}
+   else
+      tt := {25}
+   endif;
+
+   if i in s + t \ w * v + {1,2,3,4,5} + CMP{} \ v * w * t + {1,2,3,4} \ {} + {2} then
+      ss := {0}
+   else
+      ss := {24}
+   endif;
+
+
+   if CMP{} * {0,1,2,3,4,5,30,31}\t+{0,1,2,3,4,5,6,7,8,9,10}*CMP{0,1,2,3,4,5} \
+      s * t + {} \ s + CMP{} \ {} + {1,2,3} * CMP{} \ {} \ -s * -t + -{} <=
+      w * s \ t \ v + s + t * v * s * t + {1,2,3,4} \ {} + {2} then
+      tt := tt + {5}
+   else
+      tt := tt + {29}
+   endif;
+
+   if s + t \ w * v + {1,2,3,4,5} + CMP{} \ v * w * t + {1,2,3,4} \ {} + {2}
+      <= (CMP{} * {0,1,2,3,4,5,30,31}\t+{0,1,2,3,4,5,6,7,8,9,10}*CMP{0,1,2,3,4,5} \
+      s * t + {} \ s + CMP{} \ {} + {1,2,3} * CMP{} \ {} \ -s * -t + -{}) * {} then
+      ss := ss + {4}
+   else
+      ss := ss + {28}
+   endif;
+
+
+   if t + s \  w \ -v + {1,2,3,4} = CMP{} \ t + s + w * v then
+      tt := tt + {7}
+   else
+      tt := tt + {31}
+   endif;
+
+
+
+   if  not 0 in    s * t + {} \ s + CMP{} \ {} + {1,2,3} * CMP{} \ {} \ -s * -t + -{} +
+   w * s \ t \ v + s + t * v * s * t then
+      ss := ss + {6}
+   else
+      ss := ss + {30}
+   endif;
+
+
+
+
+   if not i in s + t \ w * v + {1,2,3,4,5} + CMP{} \ v * w * t + {1,2,3,4} \ {} + {2} then
+      tt := tt + {9}
+   else
+      tt := tt + {33}
+   endif;
+
+
+
+   if not CMP{} * {0,1,2,3,4,5,30,31}\t+{0,1,2,3,4,5,6,7,8,9,10}*CMP{0,1,2,3,4,5} \
+      s * t + {} \ s + CMP{} \ {} + {1,2,3} * CMP{} \ {} \ -s * -t + -{} <=
+      w * s \ t \ v + s + t * v * s * t + {1,2,3,4} \ {} + {2} then
+      tt := tt + {5};
+      ss := ss + {8}
+   else
+      ss := ss + {32}
+   endif;
+
+
+
+   if not s + t \ w * v + {1,2,3,4,5} + CMP{} \ v * w * t + {1,2,3,4} \ {} + {2}
+      <= (CMP{} * {0,1,2,3,4,5,30,31}\t+{0,1,2,3,4,5,6,7,8,9,10}*CMP{0,1,2,3,4,5} \
+      s * t + {} \ s + CMP{} \ {} + {1,2,3} * CMP{} \ {} \ -s * -t + -{}) * {} then
+      ss := ss + {4};
+      tt := tt + {11}
+   else
+      tt := tt + {35};
+      ss := ss + {36}
+   endif;
+
+
+
+   if not t + s \  w \ -v + {1,2,3,4} = CMP{} \ t + s + w * v then
+      ss := ss + {10};
+      tt := tt + {37}
+   else
+      ss := ss + {34};
+      tt := tt + {39}
+   endif
+
+end
+ss + tt
+.

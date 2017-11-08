@@ -1,0 +1,13 @@
+program g28
+
+var
+set s,t,u,v;
+
+begin
+   s := {1,2};
+   t := {2};
+   u := {3,4,5};
+   v := s + t * u
+end
+v
+.
