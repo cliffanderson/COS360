@@ -19,67 +19,70 @@ Modified 10/23/17
 2. did the initial test for the lookahead being program
    and threw the right error message
 
+Modified 11/11/17
+
+1. changed the sc declaration to be setScannerSolution instead
+   of setScanner
+
 
 */
 public class setTranslator{
 
-    private static setScanner sc;
+   private static setScannerSolution sc;
 
-    // this should be created if the parse gets as far as the identifier that
-    // follows "program"
-    private static PrintWriter dest;
+   // this should be created if the parse gets as far as the identifier that
+   // follows "program"
+   private static PrintWriter dest;
 
-    private static void program(){
-        // attempts the translation of the source file
-        // into a Java source file
-        // YOU HAVE TO CODE THIS
-
-
-
-        //print public class <class> {
-        //print     public static void main(String[] args) {
+   private static void program(){
+    // attempts the translation of the source file
+       // into a Java source file
+       // YOU HAVE TO CODE THIS
 
 
-        
-        //.....
+
+       //print public class <class> {
+       //print     public static void main(String[] args) {
 
 
-        //print     }
-        //print }
-        //print successful parse
+       
+       //.....
 
 
-    }
+       //print     }
+       //print }
+       //print successful parse
+   }
 
 
-    // you should not modify the main method
-    public static void main(String[] args) throws Exception{
+// you should not modify the main method
+public static void main(String[] args) throws Exception{
 
-        if (args.length == 0)
-            sc = new setScannerSolution(new Scanner(System.in));
-        else
-            sc = new setScannerSolution(new Scanner(new File(args[0])));
+   if (args.length == 0)
+      sc = new setScannerSolution(new Scanner(System.in));
+   else
+      sc = new setScannerSolution(new Scanner(new File(args[0])));
 
-        Token currTok = sc.lookahead();
+   Token currTok = sc.lookahead();
 
-        try{
-            if (Token.programSet.contains(currTok.getTokenType())){
-                program();
-                // add a comment  indicating a successful parse
-                if (dest != null){
-                    dest.println("\n// Successful parse.");
-                    dest.close();
-                }
-            }
-            else
-                // you should write a method to take the set of tokens that would
-                // be okay and the line number to create and throw the exception with
-                // the right error message for the other error messages
-                throw new Exception("[line " + currTok.getLineNum() + "]: \"program\" expected.");
-        }
-        catch (Exception e){
-            // if the translation throws an exception, it is written to standard error
-            System.err.println(e.getMessage());
-        }
-    }
+   try{
+      if (Token.programSet.contains(currTok.getTokenType())){
+         program();
+         // add a comment  indicating a successful parse
+         if (dest != null){
+            dest.println("\n// Successful parse.");
+            dest.close();
+         }
+      }
+      else
+         // you should write a method to take the set of tokens that would
+         // be okay and the line number to create and throw the exception with
+         // the right error message for the other error messages
+         throw new Exception("[line " + currTok.getLineNum() + "]: \"program\" expected.");
+   }
+   catch (Exception e){
+      // if the translation throws an exception, it is written to standard error
+      System.err.println(e.getMessage());
+   }
+}
 }
