@@ -144,7 +144,7 @@ public class Token implements Comparable<Token>{
    public  static TreeSet<Integer> ifSuffixSet = new TreeSet<Integer>();
    public  static TreeSet<Integer> outSet = setExpSet;  // for <out>; it is the same as setExpSet
 
-      x
+      
    static{
 
       // initializing code for the static variables of lookahead sets for the
@@ -230,7 +230,7 @@ public class Token implements Comparable<Token>{
       ifSuffixSet.add(Token.ENDIF);
       ifSuffixSet.add(Token.ELSE);
    
-
+   }
    private int
       lineNum,  // line of the source file where the token came from
       tokenType;  // uses the constants defined above to name the token
