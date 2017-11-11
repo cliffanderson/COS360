@@ -1,6 +1,14 @@
 import java.util.*;
 /*
 
+Modified 11/11/17
+
+1. deleted the stray x before the static initializer block for the
+   TreeSet<Integer> variables
+
+2. put in a } to close that block
+
+
 A class to represent a token in the translation project.
 
 It has data members
@@ -229,8 +237,8 @@ public class Token implements Comparable<Token>{
 
       ifSuffixSet.add(Token.ENDIF);
       ifSuffixSet.add(Token.ELSE);
-   
-   }
+   }   
+
    private int
       lineNum,  // line of the source file where the token came from
       tokenType;  // uses the constants defined above to name the token
