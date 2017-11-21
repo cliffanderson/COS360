@@ -144,91 +144,92 @@ public class Token implements Comparable<Token>{
    public  static TreeSet<Integer> ifSuffixSet = new TreeSet<Integer>();
    public  static TreeSet<Integer> outSet = setExpSet;  // for <out>; it is the same as setExpSet
 
-      x
-   static{
 
-      // initializing code for the static variables of lookahead sets for the
-      // grammar variables
+   static {
 
-      programSet.add(Token.PROGRAM);
+       // initializing code for the static variables of lookahead sets for the
+       // grammar variables
 
-      decSet.add(Token.NAT);
-      decSet.add(Token.SET);
-      decSet.add(Token.BEGIN);
+       programSet.add(Token.PROGRAM);
 
-      natDecSet.add(Token.NAT);
-      natDecSet.add(Token.SET);
-      natDecSet.add(Token.BEGIN);
+       decSet.add(Token.NAT);
+       decSet.add(Token.SET);
+       decSet.add(Token.BEGIN);
 
-      setDecSet.add(Token.SET);
-      setDecSet.add(Token.BEGIN);
+       natDecSet.add(Token.NAT);
+       natDecSet.add(Token.SET);
+       natDecSet.add(Token.BEGIN);
 
-      neVarListSet.add(Token.ID);
+       setDecSet.add(Token.SET);
+       setDecSet.add(Token.BEGIN);
 
-      stListSet.add(Token.END);
-      stListSet.add(Token.ID);
-      stListSet.add(Token.IF);
-      stListSet.add(Token.ELSE);
-      stListSet.add(Token.ENDIF);
+       neVarListSet.add(Token.ID);
 
-      neStListSet.add(Token.ID);
-      neStListSet.add(Token.IF);
+       stListSet.add(Token.END);
+       stListSet.add(Token.ID);
+       stListSet.add(Token.IF);
+       stListSet.add(Token.ELSE);
+       stListSet.add(Token.ENDIF);
+
+       neStListSet.add(Token.ID);
+       neStListSet.add(Token.IF);
 
 
-      stSet.add(Token.ID);
-      stSet.add(Token.IF);
+       stSet.add(Token.ID);
+       stSet.add(Token.IF);
 
-      asgnSet.add(Token.ID);
+       asgnSet.add(Token.ID);
 
-      setExpSet.add(Token.LEFTBRACE);
-      setExpSet.add(Token.LEFTPAREN);
-      setExpSet.add(Token.COMPLEMENT);
-      setExpSet.add(Token.ID);
-      setExpSet.add(Token.CMP);
+       setExpSet.add(Token.LEFTBRACE);
+       setExpSet.add(Token.LEFTPAREN);
+       setExpSet.add(Token.COMPLEMENT);
+       setExpSet.add(Token.ID);
+       setExpSet.add(Token.CMP);
 
-      setAtomicSet.add(Token.LEFTBRACE);
-      setAtomicSet.add(Token.LEFTPAREN);
-      setAtomicSet.add(Token.ID);
-      setAtomicSet.add(Token.CMP);
+       setAtomicSet.add(Token.LEFTBRACE);
+       setAtomicSet.add(Token.LEFTPAREN);
+       setAtomicSet.add(Token.ID);
+       setAtomicSet.add(Token.CMP);
 
-      setConstSet.add(Token.LEFTBRACE);
-      setConstSet.add(Token.CMP);
-      
-      complementedSet.add(Token.CMP);
+       setConstSet.add(Token.LEFTBRACE);
+       setConstSet.add(Token.CMP);
 
-      setLiteralSet.add(Token.LEFTBRACE);
+       complementedSet.add(Token.CMP);
 
-      natListSet.add(Token.RIGHTBRACE);
-      natListSet.add(Token.NATCONST);
+       setLiteralSet.add(Token.LEFTBRACE);
 
-      // not really needed, but I'll include it
-      neNatListSet.add(Token.NATCONST);
+       natListSet.add(Token.RIGHTBRACE);
+       natListSet.add(Token.NATCONST);
 
-      natExpSet.add(Token.ID);
-      natExpSet.add(Token.NATCONST);
+       // not really needed, but I'll include it
+       neNatListSet.add(Token.NATCONST);
 
-      testSet.add(Token.LEFTBRACE);
-      testSet.add(Token.LEFTPAREN);
-      testSet.add(Token.ID);
-      testSet.add(Token.CMP);
-      testSet.add(Token.COMPLEMENT);
-      testSet.add(Token.NATCONST);
-      testSet.add(Token.NOT);
+       natExpSet.add(Token.ID);
+       natExpSet.add(Token.NATCONST);
 
-      testAtomicSet.add(Token.LEFTBRACE);
-      testAtomicSet.add(Token.LEFTPAREN);
-      testAtomicSet.add(Token.ID);
-      testAtomicSet.add(Token.COMPLEMENT);
-      testAtomicSet.add(Token.CMP);
-      testAtomicSet.add(Token.NATCONST);
+       testSet.add(Token.LEFTBRACE);
+       testSet.add(Token.LEFTPAREN);
+       testSet.add(Token.ID);
+       testSet.add(Token.CMP);
+       testSet.add(Token.COMPLEMENT);
+       testSet.add(Token.NATCONST);
+       testSet.add(Token.NOT);
 
-      setTestSuffixSet.add(Token.EQUALS);
-      setTestSuffixSet.add(Token.SUBSET);
+       testAtomicSet.add(Token.LEFTBRACE);
+       testAtomicSet.add(Token.LEFTPAREN);
+       testAtomicSet.add(Token.ID);
+       testAtomicSet.add(Token.COMPLEMENT);
+       testAtomicSet.add(Token.CMP);
+       testAtomicSet.add(Token.NATCONST);
 
-      ifSet.add(Token.IF);
+       setTestSuffixSet.add(Token.EQUALS);
+       setTestSuffixSet.add(Token.SUBSET);
 
-      ifSuffixSet.add(Token.ENDIF);
-      ifSuffixSet.add(Token.ELSE);
+       ifSet.add(Token.IF);
+
+       ifSuffixSet.add(Token.ENDIF);
+       ifSuffixSet.add(Token.ELSE);
+   }
    
 
    private int

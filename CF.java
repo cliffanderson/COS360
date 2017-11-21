@@ -3,7 +3,7 @@ import java.util.*;
 
 TEMPLATE FILE FOR THE INDIVIDUAL PART OF THIS PROJECT
 
-Your name:
+Your name:  Cliff Anderson
 
 
 *********************************************************/
@@ -13,7 +13,7 @@ public class CF {
 
    private boolean complement;
    private TreeSet<Integer> finite; // should never be null, even if
-   // the set is empty
+    // the set is empty
    
    /**
 
@@ -74,36 +74,58 @@ public class CF {
       finite = new TreeSet<Integer>();
       
    }
-   
-   public CF(boolean comp, int n) {
-      /***
-      if  n >= 0, if comp is false, constructs the rep of { n } else
-      constructs the rep of the complement of { n }
-      
+
+    public CF(boolean comp, int n) {
+        /****
+         YOU NEED TO CODE THIS
+         ****/
+        /***
+         if  n >= 0, if comp is false, constructs the rep of { n } else
+         constructs the rep of the complement of { n }
+
          if n < 0 if comp is false creates the rep of the empty set else creates
          the rep of N
-       ***/
-      this();
-   }
+         ***/
+        this();
+        this.complement = comp;
+        if(n < 0)
+            this.finite = new TreeSet<Integer>();
+        else {
+            this.finite = new TreeSet<Integer>();
+            this.finite.add(n);
+        }
+    }
 
 
    // YOU WILL NEED TO GET THE CODE FOR THIS CONSTRUCTOR   
    public CF(boolean comp, int[] A) {
-      /***
-         if comp is false
-            if A is null 
-               constructs the rep of the empty set 
-            else
-               constructs the rep of the distinct values in A that are >= 0 (could be
-               none, e.g., if A is { -1,-2,-3 }) 
-         else 
-            if A is null 
-               constructs the rep of all of the natural numbers 
-            else constructs the rep of the complement of all of the natural 
-               numbers (which are all >= 0) that are elements of A)
-       ***/
-      this();
-      
+       /****
+        YOU NEED TO CODE THIS
+        ****/
+       /***
+        if comp is false
+        if A is null
+        constructs the rep of the empty set
+        else
+        constructs the rep of the distinct values in A that are >= 0 (could be
+        none, e.g., if A is { -1,-2,-3 })
+        else
+        if A is null
+        constructs the rep of all of the natural numbers
+        else constructs the rep of the complement of all of the natural
+        numbers (which are all >= 0) that are elements of A)
+        ***/
+       this();
+       this.complement = comp;
+       if(A != null) {
+           this.finite = new TreeSet<Integer>();
+           for (int i = 0; i < A.length; i++)
+               if(A[i] >= 0)
+                   this.finite.add(A[i]);
+       }
+       else
+           this.finite = new TreeSet<Integer>();
+
    }
    
 
@@ -165,9 +187,53 @@ public class CF {
   result of subtracting of the members of other from the
   members of this.
 
+
+
+ advice from nick:
+
+ x = this - other
+ y = other - this
+
+ result is x union y
+
 **/
 
-    return new CF();
+    CF result = new CF();
+
+    // for elements in this
+    // if not in other, add to result
+
+
+    if (this.complement && other.complement) {
+        result.complement = false;
+
+        // in second   if not in first, add
+        for(int i : other.finite) {
+            if(! this.finite.contains(i)) {
+                result.finite.add(i);
+            }
+        }
+    } else if (other.complement) {
+        for (int i : this.finite) {
+            if (other.finite.contains(i)) {
+                result.finite.add(i);
+            }
+        }
+
+    } else if(this.complement) {
+        result.complement = true;
+        result.finite.addAll(this.finite);
+        result.finite.addAll(other.finite);
+
+    } else {
+        for (int i : this.finite) {
+            if (!other.finite.contains(i)) {
+                result.finite.add(i);
+            }
+        }
+    }
+
+    return result;
 }
 private static  // they will be initialized to null
    CF

@@ -23,24 +23,58 @@ Modified 10/23/17
 */
 public class setTranslator{
 
-    private static setScanner sc;
+    private static setScannerSolution sc;
 
     // this should be created if the parse gets as far as the identifier that
     // follows "program"
     private static PrintWriter dest;
 
-    private static void program(){
+    private static void program() throws Exception {
         // attempts the translation of the source file
         // into a Java source file
         // YOU HAVE TO CODE THIS
 
+
+        System.out.println("program()");
+
+        String tokenType = "";
+
+        if(sc.lookahead().getTokenType() != Token.PROGRAM) {
+            System.err.println("Error: program must start with a program token");
+            throw new Exception("");
+        } else {
+            sc.consume();
+            if(sc.lookahead().getTokenType() != Token.ID) {
+                System.err.println("Error: must name the program");
+                throw new Exception("");
+            } else {
+                String programName = sc.lookahead().getTokenString();
+                System.out.println("public class " + programName + " {");
+                System.out.println("    public static void main(String[] args) {");
+                sc.consume();
+            }
+        }
+
+        // main loop for parsing
+         while(! tokenType.equals("eof")) {
+             tokenType = Token.TOKEN_LABELS[sc.lookahead().getTokenType()];
+             String tokenStringValue = sc.lookahead().getTokenString();
+
+             System.out.printf("Token type: %s      Token string value: %s%n",
+                     tokenType,
+                     tokenStringValue);
+
+
+            sc.consume();
+
+        }
 
 
         //print public class <class> {
         //print     public static void main(String[] args) {
 
 
-        
+
         //.....
 
 
