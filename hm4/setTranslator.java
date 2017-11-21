@@ -19,6 +19,11 @@ Modified 10/23/17
 2. did the initial test for the lookahead being program
    and threw the right error message
 
+Modified 11/11/17
+
+1. changed the sc declaration to be setScannerSolution instead
+   of setScanner
+
 
 */
 public class setTranslator{
@@ -29,11 +34,7 @@ public class setTranslator{
     // follows "program"
     private static PrintWriter dest;
 
-    private static void program() throws Exception {
-        // attempts the translation of the source file
-        // into a Java source file
-        // YOU HAVE TO CODE THIS
-
+    public static void program() throws Exception {
 
         System.out.println("program()");
 
@@ -56,13 +57,13 @@ public class setTranslator{
         }
 
         // main loop for parsing
-         while(! tokenType.equals("eof")) {
-             tokenType = Token.TOKEN_LABELS[sc.lookahead().getTokenType()];
-             String tokenStringValue = sc.lookahead().getTokenString();
+        while(! tokenType.equals("eof")) {
+            tokenType = Token.TOKEN_LABELS[sc.lookahead().getTokenType()];
+            String tokenStringValue = sc.lookahead().getTokenString();
 
-             System.out.printf("Token type: %s      Token string value: %s%n",
-                     tokenType,
-                     tokenStringValue);
+            System.out.printf("Token type: %s      Token string value: %s%n",
+                    tokenType,
+                    tokenStringValue);
 
 
             sc.consume();
@@ -70,19 +71,15 @@ public class setTranslator{
         }
 
 
+
         //print public class <class> {
         //print     public static void main(String[] args) {
 
-
-
         //.....
-
 
         //print     }
         //print }
         //print successful parse
-
-
     }
 
 
