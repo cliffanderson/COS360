@@ -200,12 +200,43 @@ public class setTranslator{
 
     private static void doSet() throws Exception {
         // consume set
+        sc.consume();
+
+        List<String> privateSetVariables = new ArrayList<String>();
 
         // while not semicolon
-            // consume ID and create nat
-            // if not comma, break;
+        // consume ID and create nat
+        // if not comma, break;
+
+        while(sc.lookahead().getTokenType() != Token.SEMICOLON) {
+            if(sc.lookahead().getTokenType() != Token.ID) {
+                throw new Exception("Unexpected token: " + Token.TOKEN_LABELS[sc.lookahead().getTokenType()]);
+            }
+
+            String setVariableName = sc.lookahead().getTokenString();
+            privateSetVariables.add(setVariableName);
+
+            // no comma, last of nat variables
+            if(sc.lookahead().getTokenType() != Token.COMMA) {
+                break;
+            }
+
+        }
 
         // consume semicolon
+
+        if(sc.lookahead().getTokenType() != Token.SEMICOLON) {
+            throw new Exception("Unexpected token: " + Token.TOKEN_LABELS[sc.lookahead().getTokenType()]);
+        }
+
+        sc.consume();
+
+        // output code to declare nat variables
+
+        for(String varName : privateSetVariables) {
+            System.out.println("        Cofin " + varName + " = null;");
+            setVariables.put(varName, null);
+        }
     }
 
 
