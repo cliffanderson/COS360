@@ -24,6 +24,10 @@ public class setTranslator{
     // follows "program"
     private static PrintWriter dest;
 
+    private static Map<String, Integer> naturalVariables = new HashMap<String, Integer>();
+    private static Map<String, CofinFin> setVariables = new HashMap<String, CofinFin>();
+
+
     public static void program() throws Exception {
 
         System.out.println("program()");
@@ -155,10 +159,43 @@ public class setTranslator{
 
     private static void doNat() throws Exception {
         // consume nat
+        sc.consume();
+
+        List<String> natVariables = new ArrayList<String>();
 
         // while not semicolon
             // consume ID and create nat
             // if not comma, break;
+
+        while(sc.lookahead().getTokenType() != Token.SEMICOLON) {
+            if(sc.lookahead().getTokenType() != Token.ID) {
+                throw new Exception("Unexpected token: " + Token.TOKEN_LABELS[sc.lookahead().getTokenType()]);
+            }
+
+            String natVariableName = sc.lookahead().getTokenString();
+            natVariables.add(natVariableName);
+
+            // no comma, last of nat variables
+            if(sc.lookahead().getTokenType() != Token.COMMA) {
+                break;
+            }
+
+        }
+
+        // consume semicolon
+
+        if(sc.lookahead().getTokenType() != Token.SEMICOLON) {
+            throw new Exception("Unexpected token: " + Token.TOKEN_LABELS[sc.lookahead().getTokenType()]);
+        }
+
+        sc.consume();
+
+        // output code to declare nat variables
+
+        for(String varName : natVariables) {
+            System.out.println("        int " + varName + " = 0;");
+            naturalVariables.put(varName, 0);
+        }
     }
 
     private static void doSet() throws Exception {
@@ -167,6 +204,8 @@ public class setTranslator{
         // while not semicolon
             // consume ID and create nat
             // if not comma, break;
+
+        // consume semicolon
     }
 
 
