@@ -31,19 +31,32 @@ public class setTranslator{
         String tokenType = "";
 
         if(sc.lookahead().getTokenType() != Token.PROGRAM) {
-            System.err.println("Error: program must start with a program token");
-            throw new Exception("");
-        } else {
-            sc.consume();
-            if(sc.lookahead().getTokenType() != Token.ID) {
-                System.err.println("Error: must name the program");
-                throw new Exception("");
-            } else {
-                String programName = sc.lookahead().getTokenString();
-                System.out.println("public class " + programName + " {");                
-                sc.consume();
-            }
+            throw new Exception("Error: program must start with a program token");
         }
+
+        // handle program token
+        doProgram();
+
+        // next token must be var
+        if(sc.lookahead().getTokenType() != Token.VAR) {
+            throw new Exception("Missing var token");
+        }
+
+        // handle var token
+        doVar();
+
+
+//        else {
+//            sc.consume();
+//            if(sc.lookahead().getTokenType() != Token.ID) {
+//                System.err.println("Error: must name the program");
+//                throw new Exception("");
+//            } else {
+//                String programName = sc.lookahead().getTokenString();
+//                System.out.println("public class " + programName + " {");
+//                sc.consume();
+//            }
+//        }
 
         // main loop for parsing
         while(! tokenType.equals("eof")) {
@@ -81,6 +94,50 @@ public class setTranslator{
             }
         }
     }
+
+    // there should be an ID token for the program name
+    private static void doProgram() throws Exception {
+        // consume program token
+        sc.consume();
+
+        if(sc.lookahead().getTokenType() != Token.ID) {
+            throw new Exception("Name of program not found");
+        }
+
+        String programName = sc.lookahead().getTokenString();
+
+        System.out.println("public class " + programName + " {");
+        System.out.println("    public static void main(String[] args) {");
+
+        //consume ID token
+        sc.consume();
+    }
+
+    private static void doVar() throws Exception {
+        // consume var token
+        sc.consume();
+
+        // handle OPTIONAL nat and set tokens and their values
+
+    }
+
+    private static void doNat() throws Exception {
+        // consume nat
+
+        // while not semicolon
+            // consume ID and create nat
+            // if not comma, break;
+    }
+
+    private static void doSet() throws Exception {
+        // consume set
+
+        // while not semicolon
+            // consume ID and create nat
+            // if not comma, break;
+    }
+
+
 
 
     // you should not modify the main method
