@@ -111,7 +111,7 @@ public class setTranslator{
         String programName = sc.lookahead().getTokenString();
 
         System.out.println("public class " + programName + " {");
-        System.out.println("    public static void main(String[] args) {");
+        //System.out.println("    public static void main(String[] args) {");
 
         //consume ID token
         sc.consume();
@@ -196,7 +196,7 @@ public class setTranslator{
         // output code to declare nat variables
 
         for(String varName : natVariables) {
-            System.out.println("        int " + varName + " = 0;");
+            System.out.println("    private static int " + varName + " = 0;");
             naturalVariables.put(varName, 0);
         }
     }
@@ -241,7 +241,7 @@ public class setTranslator{
         // output code to declare nat variables
 
         for(String varName : privateSetVariables) {
-            System.out.println("        Cofin " + varName + " = null;");
+            System.out.println("    private static Cofin " + varName + " = null;");
             setVariables.put(varName, null);
         }
     }
