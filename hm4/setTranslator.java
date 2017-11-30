@@ -131,7 +131,8 @@ public class setTranslator{
             doNat();
             natDone = true;
         } else {
-            throw new Exception("Unexpected token type: " + Token.TOKEN_LABELS[sc.lookahead().getTokenType()]);
+            // Neither nat or set found, no variable definitions
+            return;
         }
 
         // nat or set is now done. Now time to do the other
@@ -151,8 +152,6 @@ public class setTranslator{
             } else {
                 doNat();
             }
-        } else {
-            throw new Exception("Unexpected token type: " + Token.TOKEN_LABELS[sc.lookahead().getTokenType()]);
         }
 
     }
@@ -169,15 +168,19 @@ public class setTranslator{
 
         while(sc.lookahead().getTokenType() != Token.SEMICOLON) {
             if(sc.lookahead().getTokenType() != Token.ID) {
-                throw new Exception("Unexpected token: " + Token.TOKEN_LABELS[sc.lookahead().getTokenType()]);
+                throw new Exception("Unexpected token in doNat(): " + Token.TOKEN_LABELS[sc.lookahead().getTokenType()] + "  " + sc.lookahead().getTokenType());
             }
 
             String natVariableName = sc.lookahead().getTokenString();
             natVariables.add(natVariableName);
+            sc.consume();
 
             // no comma, last of nat variables
             if(sc.lookahead().getTokenType() != Token.COMMA) {
                 break;
+            } else {
+                // consume comma
+                sc.consume();
             }
 
         }
@@ -185,7 +188,7 @@ public class setTranslator{
         // consume semicolon
 
         if(sc.lookahead().getTokenType() != Token.SEMICOLON) {
-            throw new Exception("Unexpected token: " + Token.TOKEN_LABELS[sc.lookahead().getTokenType()]);
+            throw new Exception("Unexpected token in doNat(): " + Token.TOKEN_LABELS[sc.lookahead().getTokenType()] + "  " + sc.lookahead().getTokenType());
         }
 
         sc.consume();
@@ -215,10 +218,14 @@ public class setTranslator{
 
             String setVariableName = sc.lookahead().getTokenString();
             privateSetVariables.add(setVariableName);
+            sc.consume();
 
             // no comma, last of nat variables
             if(sc.lookahead().getTokenType() != Token.COMMA) {
                 break;
+            } else {
+                // consume comma
+                sc.consume();
             }
 
         }
