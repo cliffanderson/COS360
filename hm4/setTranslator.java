@@ -28,7 +28,7 @@ public class setTranslator{
     private static Map<String, CofinFin> setVariables = new HashMap<String, CofinFin>();
 
 
-    public static void program() throws Exception {
+   public static void program() throws Exception {
 
         System.out.println("program()");
 
@@ -66,36 +66,11 @@ public class setTranslator{
         while(! tokenType.equals("eof")) {
             tokenType = Token.TOKEN_LABELS[sc.lookahead().getTokenType()];
             String tokenStringValue = sc.lookahead().getTokenString();
-            if(tokenType.equals("\"var\"")){
-                System.out.print("");
-                sc.consume();
-                tokenType = Token.TOKEN_LABELS[sc.lookahead().getTokenType()];
-            }
-            else if(tokenType.equals("\"set\"")){
-                while(!tokenType.equals("\"begin\"")){
-                    tokenType = Token.TOKEN_LABELS[sc.lookahead().getTokenType()];
-                    tokenStringValue = sc.lookahead().getTokenString();
-                    if(tokenType.equals("identifier")){
-                        System.out.println("    private static CofinFin " + tokenStringValue + " = new CofinFin();");
-                        sc.consume();
-                    }
-                    else
-                        sc.consume();
-                }
-                System.out.println("    public static void main(String[] args) {");
-            }
-
-            else{
-                if(tokenType.equals("\"begin\"")){
-                    System.out.println("    public static void main(String[] args) {"); 
-                    sc.consume();
-                }
-                else
+   
                     System.out.printf("Token type: %s          Token string value: %s%n",
                             tokenType,
                             tokenStringValue);
                 sc.consume();                   
-            }
         }
     }
 
