@@ -92,7 +92,6 @@ public class setTranslator{
         String programName = sc.lookahead().getTokenString();
 
         System.out.println("public class " + programName + " {");
-        //System.out.println("    public static void main(String[] args) {");
 
         //consume ID token
         sc.consume();
