@@ -118,6 +118,38 @@ public class setTranslator{
         sc.consume();
 
         // handle OPTIONAL nat and set tokens and their values
+        boolean natDone = false, setDone = false;
+
+        if(sc.lookahead().getTokenType() == Token.SET) {
+            doSet();
+            setDone = true;
+        } else if(sc.lookahead().getTokenType() == Token.NAT) {
+            doNat();
+            natDone = true;
+        } else {
+            throw new Exception("Unexpected token type: " + Token.TOKEN_LABELS[sc.lookahead().getTokenType()]);
+        }
+
+        // nat or set is now done. Now time to do the other
+        if(sc.lookahead().getTokenType() == Token.SET) {
+            // if set has already been done, throw expection
+            // otherwise doSet
+            if(setDone) {
+                throw new Exception("Duplicate set token found");
+            } else {
+                doSet();
+            }
+        } else if(sc.lookahead().getTokenType() == Token.NAT) {
+            // if nat has already been done, throw expection
+            // otherwise doNat
+            if(natDone) {
+                throw new Exception("Duplicate nat token found");
+            } else {
+                doNat();
+            }
+        } else {
+            throw new Exception("Unexpected token type: " + Token.TOKEN_LABELS[sc.lookahead().getTokenType()]);
+        }
 
     }
 
