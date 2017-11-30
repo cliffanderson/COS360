@@ -1,31 +1,21 @@
 import java.util.*;
 import java.io.*;
 /*
-
 A template for the translator part of the project.
-
 You will need to add more static variables and also methods
 for each of the grammar variables, and modify the program method below.
-
 Modified 11/20/16
-
 1. changed PrintStream to PrintWriter
 2. changed to have the main method only print the exception's error
    message to standard error when an exception is thrown.
-
 Modified 10/23/17
-
 1. changed main to use the setScannerSolution class
 2. did the initial test for the lookahead being program
    and threw the right error message
-
 Modified 11/11/17
-
 1. changed the sc declaration to be setScannerSolution instead
    of setScanner
-
-
-*/
+ */
 public class setTranslator{
 
     private static setScannerSolution sc;
@@ -50,8 +40,7 @@ public class setTranslator{
                 throw new Exception("");
             } else {
                 String programName = sc.lookahead().getTokenString();
-                System.out.println("public class " + programName + " {");
-                System.out.println("    public static void main(String[] args) {");
+                System.out.println("public class " + programName + " {");                
                 sc.consume();
             }
         }
@@ -60,26 +49,37 @@ public class setTranslator{
         while(! tokenType.equals("eof")) {
             tokenType = Token.TOKEN_LABELS[sc.lookahead().getTokenType()];
             String tokenStringValue = sc.lookahead().getTokenString();
+            if(tokenType.equals("\"var\"")){
+                System.out.print("");
+                sc.consume();
+                tokenType = Token.TOKEN_LABELS[sc.lookahead().getTokenType()];
+            }
+            else if(tokenType.equals("\"set\"")){
+                while(!tokenType.equals("\"begin\"")){
+                    tokenType = Token.TOKEN_LABELS[sc.lookahead().getTokenType()];
+                    tokenStringValue = sc.lookahead().getTokenString();
+                    if(tokenType.equals("identifier")){
+                        System.out.println("    private static CofinFin " + tokenStringValue + " = new CofinFin();");
+                        sc.consume();
+                    }
+                    else
+                        sc.consume();
+                }
+                System.out.println("    public static void main(String[] args) {");
+            }
 
-            System.out.printf("Token type: %s      Token string value: %s%n",
-                    tokenType,
-                    tokenStringValue);
-
-
-            sc.consume();
-
+            else{
+                if(tokenType.equals("\"begin\"")){
+                    System.out.println("    public static void main(String[] args) {"); 
+                    sc.consume();
+                }
+                else
+                    System.out.printf("Token type: %s          Token string value: %s%n",
+                            tokenType,
+                            tokenStringValue);
+                sc.consume();                   
+            }
         }
-
-
-
-        //print public class <class> {
-        //print     public static void main(String[] args) {
-
-        //.....
-
-        //print     }
-        //print }
-        //print successful parse
     }
 
 
