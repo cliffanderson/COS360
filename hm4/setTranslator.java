@@ -51,7 +51,6 @@ public class setTranslator{
 
 
         if(sc.lookahead().getTokenType() == Token.BEGIN){
-           System.out.println("    public static void main(String[] args){");
             doBegin();
         }
         else
@@ -255,6 +254,7 @@ public class setTranslator{
 
 
     private static void doBegin() throws Exception {
+        System.out.println("    public static void main(String[] args){");
         sc.consume(); //consume begin token
 
         TreeSet<Integer> calculationSet = new TreeSet<Integer>();
@@ -263,7 +263,6 @@ public class setTranslator{
         calculationSet.add(Token.INTERSECTION);
         calculationSet.add(Token.SETDIFFERENCE);
         calculationSet.add(Token.UNION);
-        calculationSet.add(Token.IF);
 
         int lookAheadType = sc.lookahead().getTokenType();
         String varName = null;
@@ -285,8 +284,8 @@ public class setTranslator{
         String wasAssigned = "";
 
         //while were still in the assign section of begin
-        //basically we haven't tried to do any other types of statements
-        while (!calculationSet.contains(lookAheadType)) {
+        //we haven't tried to do if statements and some sets will be calculated
+        while (Token.IF != lookAheadType) {
             //if the token after begin wasn't an ID the varName never got assigned
             //and we can skip this whole assign section
             if (varName == null)
@@ -313,9 +312,8 @@ public class setTranslator{
                 break;
 
         }
-        /**************************************************************************************/
-        //the stuff here can be changed to deal with calculations.
-        //this will tell you when it found something other than assignment and skipped it
+        /***************************************************************************************/
+        //This now lets us know if we skipped a set assignment, this would mean that my calculation in doAssign went ary
         if(!wasAssigned.equals(""))
             System.out.println("//Skipped some stuff...");
 
@@ -365,10 +363,34 @@ public class setTranslator{
                     la = sc.lookahead().getTokenType();
                     //if we get here we have at least something like s=t but it may also be s=t+u;
                     //so if the next token is part of that "calculations set"
-                    //then returnt he second variable name so we don't loose it and we can handle it later...
-                    if (calculationSet.contains(la))
-                        return tempName;
-                        //if it;s a semi colon we have everything we need, so print. Yay!
+                    //then return the second variable name so we don't loose it and we can handle it later...
+                    if (calculationSet.contains(la)) {
+                        String setCalc = tempName, tempVar;
+                        while (sc.lookahead().getTokenType() != Token.SEMICOLON || sc.lookahead().getTokenType() != Token.END)
+                            if (la == Token.UNION) {
+                                sc.consume();
+                                if(sc.lookahead().getTokenType() == Token.ID)   {
+                                    tempVar = "$" + setCalc + "v1 = "+varName;
+                                    setCalc = tempVar + ";\n";
+                                    setCalc = setCalc + varName + ".union(" + sc.lookahead().getTokenString() +");\n" + varName + " = " +tempVar + ";/n";
+                                    return setCalc;
+                                } else {//No ID Token to calculate from
+                                    throw new Exception("Invalid calculation format");
+                                }
+
+                            } else if (la == Token.INTERSECTION) {
+
+                            } else if (la == Token.COMPLEMENT) {
+
+                            } else if (la == Token.SETDIFFERENCE) {
+
+                            } else { //Not a calculation token we're set up to handle
+                                throw new Exception("Unrecognized set calculation token.");
+                            }
+                        return setCalc;
+                        //if it's a semi colon we have everything we need, so print. Yay!
+
+                    }
                     else if (la == Token.SEMICOLON) {
                         System.out.println("        " + varName + " = " + tempName + ";");
                         sc.consume();
