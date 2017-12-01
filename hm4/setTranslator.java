@@ -48,12 +48,15 @@ public class setTranslator{
 
         // handle var token
         doVar();
-        System.out.println("    public static void main(String[] args){");
 
-        if(sc.lookahead().getTokenType() == Token.BEGIN)
+
+        if(sc.lookahead().getTokenType() == Token.BEGIN){
+           System.out.println("    public static void main(String[] args){");
             doBegin();
+        }
         else
             throw new Exception("Missing Begin token");
+
 
         if(sc.lookahead().getTokenType() == Token.END) {
             doEnd();
@@ -104,7 +107,6 @@ public class setTranslator{
         }
     }
 
-
     // there should be an ID token for the program name
     private static void doProgram() throws Exception {
         // consume program token
@@ -117,7 +119,6 @@ public class setTranslator{
         String programName = sc.lookahead().getTokenString();
 
         System.out.println("public class " + programName + " {");
-        //System.out.println("    public static void main(String[] args) {");
 
         //consume ID token
         sc.consume();
