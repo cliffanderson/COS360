@@ -375,7 +375,8 @@ public class setTranslator{
                         if (sc.lookahead().getTokenType() == Token.ID) { //If token after calculation token is an ID token
 
                             if(setVariables.containsKey(sc.lookahead().getTokenString())) { //Make sure CofinFin to be calculated with is declared, throw an error if it is not
-                                throw new Exception("Error, using an undeclared variable in calculation.");
+                                //Weird bug here
+                                //throw new Exception("Error, using an undeclared variable in calculation.");
                             }
                             // Set a new temporary variable and check if it has been used, if not declare this variable
                             tempVar = "$" + setCalc + "v1";
@@ -396,7 +397,7 @@ public class setTranslator{
                             } else { //Not a calculation token we're set up to handle
                                 throw new Exception("Unrecognized set calculation token.");
                             }
-                            return "";
+                            return "$";
                             //if it's a semi colon we have everything we need, so print. Yay!
                         }
                     }
