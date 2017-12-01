@@ -55,7 +55,7 @@ public class setTranslator{
         else
             throw new Exception("Missing Begin token");
 
-
+         System.out.println("    public static void main(String[] args){");
 //        else {
 //            sc.consume();
 //            if(sc.lookahead().getTokenType() != Token.ID) {
@@ -92,7 +92,6 @@ public class setTranslator{
         String programName = sc.lookahead().getTokenString();
 
         System.out.println("public class " + programName + " {");
-        //System.out.println("    public static void main(String[] args) {");
 
         //consume ID token
         sc.consume();
