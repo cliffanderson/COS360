@@ -301,6 +301,9 @@ public class setTranslator{
                 break;
             }
             //so if we get to here we had some sort of successful assignment
+            if(!wasAssigned.equals("$")) {
+                System.out.println(wasAssigned);
+            }
             //we set ourselves up for the next one.
             lookAheadType = sc.lookahead().getTokenType();
             if (lookAheadType == Token.ID) {
