@@ -388,19 +388,39 @@ public class setTranslator{
                                 System.out.println("        ConfinFin " + tempVar + ";");
                             }
                             //Determine calculation type from 'la' (look ahead variable that was stored further up^) and then format into expressible CofinFin calculation.
-                            if (la == Token.UNION) {
-                                System.out.println("        " + tempVar + " = " + varName + ".union(" + sc.lookahead().getTokenString() + ");\n" + "        " + varName + " = " + tempVar + ";");
-                                if(sc.lookahead().getTokenType() != Token.SEMICOLON ) {
+                            if (la == Token.UNION) {                              
+                                System.out.println("        " + tempVar + " = " + varName+ ";");
+                                System.out.println("        " + tempVar + " = " + tempVar + ".union(" + sc.lookahead().getTokenString() + ");");
+                                sc.consume();
+                                 if(sc.lookahead().getTokenType() != Token.SEMICOLON ) {
                                     return "$";
                                 }
 
                             } else if (la == Token.INTERSECTION) {
+                                System.out.println("        " + tempVar + " = " + varName+ ";");
+                                System.out.println("        " + tempVar + " = " + tempVar + ".intersect(" + sc.lookahead().getTokenString() + ");");
+                                sc.consume();
+                                 if(sc.lookahead().getTokenType() != Token.SEMICOLON ) {
+                                    return "$";
+                                }
 
                             } else if (la == Token.COMPLEMENT) {
+                                System.out.println("        " + tempVar + " = " + varName+ ";");
+                                System.out.println("        " + tempVar + " = " + varName + ".complement();");
+                                sc.consume();
+                                 if(sc.lookahead().getTokenType() != Token.SEMICOLON ) {
+                                    return "$";
+                                }
 
                             } else if (la == Token.SETDIFFERENCE) {
+                                System.out.println("        " + tempVar + " = " + varName + ";");
+                                System.out.println("        " + tempVar + " = " + tempVar + ".intersect(" + sc.lookahead().getTokenString() + ".complement());");
+                                sc.consume();
+                                 if(sc.lookahead().getTokenType() != Token.SEMICOLON ) {
+                                    return "$";
+                                }
 
-                            } else { //Not a calculation token we're set up to handle
+                            }else { //Not a calculation token we're set up to handle
                                 throw new Exception("Unrecognized set calculation token.");
                             }
                             return "$";
