@@ -368,18 +368,24 @@ public class setTranslator{
                     //so if the next token is part of that "calculations set"
                     //then return the second variable name so we don't loose it and we can handle it later...
                     if (calculationSet.contains(la)) {
+                        //In here we've recognized that we're dealing with a set calculation so we look for a calculation token and then a ID token
+                        //We also check if the id token we're declari
                         String setCalc = tempName, tempVar;
-                        while (sc.lookahead().getTokenType() != Token.SEMICOLON || sc.lookahead().getTokenType() != Token.END)
+                        sc.consume();
+                        if (sc.lookahead().getTokenType() == Token.ID) { //If token after calculation token is an ID token
+
+                            if(setVariables.containsKey(sc.lookahead().getTokenString())) { //Make sure CofinFin to be calculated with is declared, throw an error if it is not
+                                throw new Exception("Error, using an undeclared variable in calculation.");
+                            }
+                            // Set a new temporary variable and check if it has been used, if not declare this variable
+                            tempVar = "$" + setCalc + "v1";
+                            if (!setVariables.containsKey(tempVar)) {
+                                System.out.println("        ConfinFin " + tempVar + ";");
+                            }
+                            //Determine calculation type from 'la' (look ahead variable that was stored further up^) and then format into expressible CofinFin calculation.
                             if (la == Token.UNION) {
-                                sc.consume();
-                                if(sc.lookahead().getTokenType() == Token.ID)   {
-                                    tempVar = "$" + setCalc + "v1";
-                                    setCalc = tempVar + " = " + varName + ";\n";
-                                    setCalc = setCalc + tempVar + " = " + varName + ".union(" + sc.lookahead().getTokenString() +");\n" + varName + " = " +tempVar + ";\n";
-                                    return setCalc;
-                                } else {//No ID Token to calculate from
-                                    throw new Exception("Invalid calculation format");
-                                }
+                                System.out.println("        " + tempVar + " = " + varName + ".union(" + sc.lookahead().getTokenString() + ");\n" + "        " + varName + " = " + tempVar + ";");
+                                return "$";
 
                             } else if (la == Token.INTERSECTION) {
 
@@ -390,9 +396,9 @@ public class setTranslator{
                             } else { //Not a calculation token we're set up to handle
                                 throw new Exception("Unrecognized set calculation token.");
                             }
-                        return setCalc;
-                        //if it's a semi colon we have everything we need, so print. Yay!
-
+                            return "";
+                            //if it's a semi colon we have everything we need, so print. Yay!
+                        }
                     }
                     else if (la == Token.SEMICOLON) {
                         System.out.println("        " + varName + " = " + tempName + ";");
