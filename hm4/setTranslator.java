@@ -248,7 +248,7 @@ public class setTranslator{
         // output code to declare nat variables
 
         for(String varName : privateSetVariables) {
-            System.out.println("    private static CofinFin " + varName + " = null;");
+            System.out.println("    private static CofinFin " + varName + " = new CofinFin();");
             setVariables.put(varName, null);
         }
     }
