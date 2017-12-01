@@ -229,7 +229,7 @@ public class setTranslator{
 
 
     private static void doBegin() throws Exception {
-        sc.consume();
+        sc.consume(); //consume begin token
 
         TreeSet<Integer> calculationSet = new TreeSet<Integer>();
         calculationSet.add(Token.COMPLEMENT);
@@ -237,22 +237,32 @@ public class setTranslator{
         calculationSet.add(Token.INTERSECTION);
         calculationSet.add(Token.SETDIFFERENCE);
         calculationSet.add(Token.UNION);
+        calculationSet.add(Token.IF);
 
         int lookAheadType = sc.lookahead().getTokenType();
         String varName = null;
+        //check that the first token after begin is an id
+        //keep it in the temp variable and consume the token
         if (lookAheadType == Token.ID) {
             varName = sc.lookahead().getTokenString();
             sc.consume();
         }
+        //if it's not it may still be valid it's just doing somehting else besides assign
+        //which wasn't my concern for the moment
         else {
             int x = 0;
             //its not doing assignments or there's an error. Still needs to be handled
         }
+        //get the next token, should be an assign or a set calculation (union, intersect....)
         lookAheadType = sc.lookahead().getTokenType();
 
         String wasAssigned = "";
 
+        //while were still in the assign section of begin
+        //basically we haven't tried to do any other types of statements
         while (!calculationSet.contains(lookAheadType)) {
+            //if the token after begin wasn't an ID the varName never got assigned
+            //and we can skip this whole assign section
             if (varName == null)
                 break;
             if (naturalVariables.containsKey(varName))
@@ -260,10 +270,13 @@ public class setTranslator{
             else if (setVariables.containsKey(varName))
                 wasAssigned = assignSet(varName, calculationSet);
             else
+                //if we get here we have an id but it wasn't declared
                 throw new Exception("Variable not declared.");
             if (!wasAssigned.equals("$")){
                 throw new Exception("Something went wrong...");
             }
+            //so if we get to here we had some sort of successful assignment
+            //we set ourselves up for the next one.
             lookAheadType = sc.lookahead().getTokenType();
             if (lookAheadType == Token.ID) {
                 varName = sc.lookahead().getTokenString();
@@ -293,30 +306,43 @@ public class setTranslator{
     private static String assignSet(String varName, TreeSet<Integer> calculationSet) throws Exception {
         int la = sc.lookahead().getTokenType();
         String tempName;
-
+        // checking for assignment token
         if(la == Token.ASSIGN) {
             sc.consume();
             la = sc.lookahead().getTokenType();
+            //if the token after the assignment is the complement "-" then we don't want this method
+            //we have only consumed the assign token so we haven't lost anything
             if (calculationSet.contains(la))
                 return null;
+            //if we get here we have assign equals a var name, which may be valid for now...
+            //s = t; for example
             if (la == Token.ID) {
+                //so get the next var name and check that it has been declared and assigned
                 tempName = sc.lookahead().getTokenString();
                 if (setVariables.containsKey(tempName)) {
                     if (setVariables.get(tempName) == null)
                         throw new Exception("Variable " + varName + " not yet assigned.");
                     sc.consume();
                     la = sc.lookahead().getTokenType();
+                    //if we get here we have at least something like s=t but it may also be s=t+u;
+                    //so if the next token is part of that "calculations set"
+                    //then returnt he second variable name so we don't loose it and we can handle it later...
                     if (calculationSet.contains(la))
                         return tempName;
+                        //if it;s a semi colon we have everything we need, so print. Yay!
                     else if (la == Token.SEMICOLON) {
                         System.out.println("        " + varName + " = " + tempName + ";");
                         sc.consume();
+                        setVariables.put(varName, setVariables.get(tempName));
                         return "$";
                     }
                     else
                         throw new Exception("Semicolon expected");
 
                 }
+                //here, and I think this is a valid option, we have something like s=c
+                //where c is a nat value.
+                //so check that c is assigned and create a cofin based on that.
                 else if (naturalVariables.containsKey(tempName)) {
                     if (naturalVariables.get(tempName) == null)
                         throw new Exception("Variable " + varName + " not yet assigned.");
@@ -324,6 +350,7 @@ public class setTranslator{
                     la = sc.lookahead().getTokenType();
                     if (la == Token.SEMICOLON) {
                         System.out.println("        " + varName + " = new Cofin(false, " + tempName + ");");
+                        setVariables.put(varName, new CofinFin(false, naturalVariables.get(tempName)));
                         sc.consume();
                         return "$";
                     }
@@ -334,17 +361,22 @@ public class setTranslator{
                 else
                     throw new Exception("Variable " + tempName + " not declared.");
             }
+            //if we get to here we have s = ...something. It's not a var name and it's not a calculation
+            //we're hoping it's either a list of values or cmp followed by a list of values
             String comp = "false";
             ArrayList<String> constructorValues= new ArrayList<String>();
+            //check for cmp first
             if (la == Token.CMP) {
                 comp = "true";
                 sc.consume();
                 la = sc.lookahead().getTokenType();
             }
+            //check for left brace and a list
             if (la == Token.LEFTBRACE) {
                 sc.consume();
                 la = sc.lookahead().getTokenType();
                 String curr;
+                //while there are numbers in the list, add them to our constructor list
                 while (la == Token.NATCONST) {
                     curr = sc.lookahead().getTokenString();
                     constructorValues.add(curr);
@@ -356,6 +388,7 @@ public class setTranslator{
                     sc.consume();
                     la = sc.lookahead().getTokenType();
                 }
+                //we expect a right brace and then semicolon
                 if (la != Token.RIGHTBRACE)
                     throw new Exception("Right brace expected.");
                 sc.consume();
@@ -363,17 +396,32 @@ public class setTranslator{
                 if (la != Token.SEMICOLON)
                     throw new Exception("Semicolon expected.");
                 sc.consume();
-                System.out.print("        int[] $" + varName + " = {");
-                for (int i = 0; i < constructorValues.size()-1; i++) {
-                    System.out.print(constructorValues.get(i) + ", ");
+                //if we get to here the assignment went well...print! Yay!
+                //construclorValues is for the print statments
+                //a if for our own internal tracking
+                //if constructor values is null there was an empty list
+                if (!constructorValues.isEmpty()) {
+                    System.out.print("        int[] $" + varName + " = {");
+                    int[] a = new int[constructorValues.size()];
+                    for (int i = 0; i < constructorValues.size()-1; i++) {
+                        System.out.print(constructorValues.get(i) + ", ");
+                        a[i]=Integer.parseInt(constructorValues.get(i));
+                    }
+                    System.out.println(constructorValues.get(constructorValues.size()-1) + "};");
+                    System.out.println("        " + varName + " = new Confin(" + comp + ", $" + varName + ");");
+                    setVariables.put(varName, new CofinFin(Boolean.getBoolean(comp), a));
+                    return "$"; //The dollar sign is an arbitrary return value just to say the assngment worked.
+                    //if it's something else then something else happened...
                 }
-                System.out.println(constructorValues.get(constructorValues.size()-1) + "};");
-                System.out.println("        " + varName + " = new Confin(" + comp + ", $" + varName + ");");
-                return "$";
+                else {
+                    System.out.println("        " + varName + " = new Confin(" + comp + ", 0);");
+                    setVariables.put(varName, new CofinFin(Boolean.getBoolean(comp), 0));
+                }
+
             }
 
         }
-
+        //if we got to here something went wrong... I dunno what though...
         return "Something fishy...";
 
     }
@@ -383,16 +431,20 @@ public class setTranslator{
     //mostly working as far as I know...
 
     private static void assignNat(String varName) throws Exception {
-        sc.consume();
+        sc.consume(); //possibly shouldn't be here....
         String natValue;
+        //get token after var name
         int la = sc.lookahead().getTokenType();
+        //it should be assign...
         if (la == Token.ASSIGN) {
             sc.consume();
             la = sc.lookahead().getTokenType();
+            //get the next token, it should be either a constant or another nat var
             if (la == Token.NATCONST)
                 natValue =sc.lookahead().getTokenString();
             else if (la == Token.ID) {
                 natValue = sc.lookahead().getTokenString();
+                //if its an id it should be a declared and assigned nat value
                 if (!naturalVariables.containsKey(natValue))
                     throw new Exception("Variable " + natValue + " not declared.");
                 else if (naturalVariables.get(natValue) == null)
@@ -400,10 +452,12 @@ public class setTranslator{
             }
             else
                 throw new Exception("Constant value expected.");
+            //if we get to here we have had a var name, assigned to a constant or var so we can print
             System.out.println("        " + varName + " = " + natValue + ";");
             naturalVariables.put(varName, Integer.getInteger(natValue));
             sc.consume();
             la = sc.lookahead().getTokenType();
+            //make sure there is a semicolon at the end
             if (la != Token.SEMICOLON)
                 throw new Exception("Semicolon expected.");
             sc.consume();
