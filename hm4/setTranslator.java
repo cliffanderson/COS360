@@ -48,14 +48,38 @@ public class setTranslator{
 
         // handle var token
         doVar();
-
+        System.out.println("    public static void main(String[] args){");
 
         if(sc.lookahead().getTokenType() == Token.BEGIN)
             doBegin();
         else
             throw new Exception("Missing Begin token");
 
-         System.out.println("    public static void main(String[] args){");
+        if(sc.lookahead().getTokenType() == Token.END) {
+            doEnd();
+        }
+        else
+            throw new Exception("End token expected.");
+
+        while(sc.lookahead().getTokenType() != Token.PERIOD) {
+            sc.consume();
+            if (sc.lookahead().getTokenType() == Token.EOF)
+                throw new Exception ("Period token expected.");
+
+        }
+        if (sc.lookahead().getTokenType() == Token.PERIOD) {
+            System.out.println("   }");
+            System.out.println("}");
+            sc.consume();
+            if(sc.lookahead().getTokenType() == Token.EOF)
+                sc.consume();
+            else
+                throw new Exception("Nothing allowed after period.");
+        }
+
+
+
+
 //        else {
 //            sc.consume();
 //            if(sc.lookahead().getTokenType() != Token.ID) {
@@ -80,6 +104,7 @@ public class setTranslator{
         }
     }
 
+
     // there should be an ID token for the program name
     private static void doProgram() throws Exception {
         // consume program token
@@ -92,6 +117,7 @@ public class setTranslator{
         String programName = sc.lookahead().getTokenString();
 
         System.out.println("public class " + programName + " {");
+        //System.out.println("    public static void main(String[] args) {");
 
         //consume ID token
         sc.consume();
@@ -221,7 +247,7 @@ public class setTranslator{
         // output code to declare nat variables
 
         for(String varName : privateSetVariables) {
-            System.out.println("    private static Cofin " + varName + " = null;");
+            System.out.println("    private static CofinFin " + varName + " = null;");
             setVariables.put(varName, null);
         }
     }
@@ -272,7 +298,7 @@ public class setTranslator{
                 //if we get here we have an id but it wasn't declared
                 throw new Exception("Variable not declared.");
             if (!wasAssigned.equals("$")){
-                throw new Exception("Something went wrong...");
+                break;
             }
             //so if we get to here we had some sort of successful assignment
             //we set ourselves up for the next one.
@@ -285,6 +311,19 @@ public class setTranslator{
             else
                 break;
 
+        }
+        /**************************************************************************************/
+        //the stuff here can be changed to deal with calculations.
+        //this will tell you when it found something other than assignment and skipped it
+        if(!wasAssigned.equals(""))
+            System.out.println("//Skipped some stuff...");
+
+        //this just skips to the end so we can have something to print.
+        while(lookAheadType != Token.END) {
+            sc.consume();
+            lookAheadType = sc.lookahead().getTokenType();
+            if (lookAheadType == Token.EOF)
+                throw new Exception("End token expected.");
         }
 
     }
@@ -348,7 +387,7 @@ public class setTranslator{
                     sc.consume();
                     la = sc.lookahead().getTokenType();
                     if (la == Token.SEMICOLON) {
-                        System.out.println("        " + varName + " = new Cofin(false, " + tempName + ");");
+                        System.out.println("        " + varName + " = new CofinFin(false, " + tempName + ");");
                         setVariables.put(varName, new CofinFin(false, naturalVariables.get(tempName)));
                         sc.consume();
                         return "$";
@@ -407,14 +446,15 @@ public class setTranslator{
                         a[i]=Integer.parseInt(constructorValues.get(i));
                     }
                     System.out.println(constructorValues.get(constructorValues.size()-1) + "};");
-                    System.out.println("        " + varName + " = new Confin(" + comp + ", $" + varName + ");");
+                    System.out.println("        " + varName + " = new CofinFin(" + comp + ", $" + varName + ");");
                     setVariables.put(varName, new CofinFin(Boolean.getBoolean(comp), a));
                     return "$"; //The dollar sign is an arbitrary return value just to say the assngment worked.
                     //if it's something else then something else happened...
                 }
                 else {
-                    System.out.println("        " + varName + " = new Confin(" + comp + ", 0);");
+                    System.out.println("        " + varName + " = new CofinFin(" + comp + ", 0);");
                     setVariables.put(varName, new CofinFin(Boolean.getBoolean(comp), 0));
+                    return "$";
                 }
 
             }
@@ -430,7 +470,6 @@ public class setTranslator{
     //mostly working as far as I know...
 
     private static void assignNat(String varName) throws Exception {
-        sc.consume(); //possibly shouldn't be here....
         String natValue;
         //get token after var name
         int la = sc.lookahead().getTokenType();
@@ -464,6 +503,36 @@ public class setTranslator{
         }
         else
             throw new Exception ("Assignment expected");
+
+    }
+
+    //at the end is the print statment.
+    //We are either printing a previously declared and assigned var or the empty string
+    //so we should get End then a var or {} then the . to end the program
+    // the var may include calculations, I'm ignoring those for now...
+
+    private static void doEnd() throws Exception {
+        sc.consume();
+        int la = sc.lookahead().getTokenType();
+        if (la == Token.ID) {
+            String varName = sc.lookahead().getTokenString();
+            if(setVariables.containsKey(varName) && setVariables.get(varName) != null) {
+                System.out.println("        System.out.println(" + varName + ".toString());");
+            }
+            else if (naturalVariables.containsKey(varName) && naturalVariables.get(varName) != null) {
+                System.out.println("        System.out.println(" + varName + ");");
+            }
+            else
+                throw new Exception("Variable " + varName + "may not have been declared or assigned.");
+        }
+        else if (la == Token.LEFTBRACE) {
+            System.out.println("        System.out.println(new CofinFin());");
+            sc.consume();
+            if(sc.lookahead().getTokenType() != Token.RIGHTBRACE)
+                throw new Exception("Right brace expected.");
+        }
+        else
+            throw new Exception("Something else fishy...");
 
     }
 
