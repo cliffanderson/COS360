@@ -297,7 +297,7 @@ public class setTranslator{
             else
                 //if we get here we have an id but it wasn't declared
                 throw new Exception("Variable not declared.");
-            if (!wasAssigned.startsWith("$")){
+            if (!wasAssigned.equals("$")){
                 break;
             }
             //so if we get to here we had some sort of successful assignment
@@ -372,6 +372,10 @@ public class setTranslator{
                         //We also check if the id token we're declari
                         String setCalc = tempName, tempVar;
                         sc.consume();
+                        if (sc.lookahead().getTokenType() == Token.SEMICOLON) {
+                            //no need to calculate, this is just setting a CofinFin to equal another CofinFin
+                            System.out.println("        " + varName + " = " + tempName + ";");
+                        }
                         if (sc.lookahead().getTokenType() == Token.ID) { //If token after calculation token is an ID token
 
                             if(setVariables.containsKey(sc.lookahead().getTokenString())) { //Make sure CofinFin to be calculated with is declared, throw an error if it is not
@@ -386,7 +390,9 @@ public class setTranslator{
                             //Determine calculation type from 'la' (look ahead variable that was stored further up^) and then format into expressible CofinFin calculation.
                             if (la == Token.UNION) {
                                 System.out.println("        " + tempVar + " = " + varName + ".union(" + sc.lookahead().getTokenString() + ");\n" + "        " + varName + " = " + tempVar + ";");
-                                return "$";
+                                if(sc.lookahead().getTokenType() != Token.SEMICOLON ) {
+                                    return "$";
+                                }
 
                             } else if (la == Token.INTERSECTION) {
 
