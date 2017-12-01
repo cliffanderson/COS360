@@ -50,12 +50,13 @@ public class setTranslator{
         doVar();
 
 
-        if(sc.lookahead().getTokenType() == Token.BEGIN)
+        if(sc.lookahead().getTokenType() == Token.BEGIN){
+           System.out.println("    public static void main(String[] args){");
             doBegin();
+        }
         else
             throw new Exception("Missing Begin token");
-
-         System.out.println("    public static void main(String[] args){");
+        
 //        else {
 //            sc.consume();
 //            if(sc.lookahead().getTokenType() != Token.ID) {
