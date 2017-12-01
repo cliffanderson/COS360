@@ -297,7 +297,7 @@ public class setTranslator{
             else
                 //if we get here we have an id but it wasn't declared
                 throw new Exception("Variable not declared.");
-            if (!wasAssigned.equals("$")){
+            if (!wasAssigned.startsWith("$")){
                 break;
             }
             //so if we get to here we had some sort of successful assignment
@@ -370,9 +370,9 @@ public class setTranslator{
                             if (la == Token.UNION) {
                                 sc.consume();
                                 if(sc.lookahead().getTokenType() == Token.ID)   {
-                                    tempVar = "$" + setCalc + "v1 = "+varName;
-                                    setCalc = tempVar + ";\n";
-                                    setCalc = setCalc + varName + ".union(" + sc.lookahead().getTokenString() +");\n" + varName + " = " +tempVar + ";/n";
+                                    tempVar = "$" + setCalc + "v1";
+                                    setCalc = tempVar + " = " + varName + ";\n";
+                                    setCalc = setCalc + tempVar + " = " + varName + ".union(" + sc.lookahead().getTokenString() +");\n" + varName + " = " +tempVar + ";\n";
                                     return setCalc;
                                 } else {//No ID Token to calculate from
                                     throw new Exception("Invalid calculation format");
