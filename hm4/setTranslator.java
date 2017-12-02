@@ -584,11 +584,32 @@ public class setTranslator{
             else
                 throw new Exception("Variable " + varName + "may not have been declared or assigned.");
         }
+        //the next if cases only work when there is nothing in between begin and end
+        //and the only thing to print out is the empty set and the Complement of the empty set
         else if (la == Token.LEFTBRACE) {
-            System.out.println("        System.out.println(new CofinFin());");
             sc.consume();
-            if(sc.lookahead().getTokenType() != Token.RIGHTBRACE)
+            int la2 = sc.lookahead().getTokenType();
+            //checks to see if it's just an empty set
+            if(la2 == Token.RIGHTBRACE){
+            System.out.println("        CofinFin $sv1 = new CofinFin(false, new int[] {});");
+            System.out.println("        System.out.println($sv1.toString());");
+            }
+            if(la2 != Token.RIGHTBRACE)
                 throw new Exception("Right brace expected.");
+        }
+        else if (la == Token.CMP){
+            sc.consume();
+            int la2 = sc.lookahead().getTokenType();
+            if (la2 == Token.LEFTBRACE) {
+                sc.consume();
+                int la3 = sc.lookahead().getTokenType();
+                if (la3 == Token.RIGHTBRACE){
+                    sc.consume();
+                    System.out.println("        CofinFin $sv1 = new CofinFin(true, new int[] {});");
+                    System.out.println("        System.out.println($sv1.toString());");
+                }
+            }
+           
         }
         else
             throw new Exception("Something else fishy...");
