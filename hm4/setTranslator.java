@@ -352,12 +352,18 @@ public class setTranslator{
          la = sc.lookahead().getTokenType();
          //if the token after the assignment is the complement "-" then we don't want this method
          //we have only consumed the assign token so we haven't lost anything
-         if (calculationSet.contains(la))
-            return null;
+          boolean compCheck = false;
          //if we get here we have assign equals a var name, which may be valid for now...
          //s = t; for example
-         if (la == Token.ID) {
+          // Nick: I created a check later on to see if it's assign equals a var name so here the case is going to be that it is a compliment set in a calculation
+         if (la == Token.ID || la == Token.COMPLEMENT) {
             //so get the next var name and check that it has been declared and assigned
+            if(la == Token.COMPLEMENT){
+            //If we are dealing with a compliment symbol, consume to variable symbol and remember that we're dealing with a compliment
+                sc.consume();
+                la = sc.lookahead().getTokenType();
+                compCheck = true;
+            }
             tempName = sc.lookahead().getTokenString();
             if (setVariables.containsKey(tempName)) {
                if (setVariables.get(tempName) == null)
@@ -369,64 +375,76 @@ public class setTranslator{
                //then return the second variable name so we don't loose it and we can handle it later...
                if (calculationSet.contains(la)) {
                   //In here we've recognized that we're dealing with a set calculation so we look for a calculation token and then a ID token
-                  //We also check if the id token we're declari
+                  //We also check if the id token we're declaring with is already declared
                   String setCalc = tempName, tempVar1;
                   String setCalc2 = tempName, tempVar2;
                   sc.consume();
                   if (sc.lookahead().getTokenType() == Token.SEMICOLON) {
                      //no need to calculate, this is just setting a CofinFin to equal another CofinFin
-                     System.out.println("        " + varName + " = " + tempName + ";");
+                      if (compCheck){
+                          System.out.println("        " + varName + " = " + tempName + ".complement();");
+                      }else {
+                          System.out.println("        " + varName + " = " + tempName + ";");
+                      }
                   }
-                  if (sc.lookahead().getTokenType() == Token.ID) { //If token after calculation token is an ID token
-
-                     if(setVariables.containsKey(sc.lookahead().getTokenString())) { //Make sure CofinFin to be calculated with is declared, throw an error if it is not
-                        //Weird bug here
-                        //throw new Exception("Error, using an undeclared variable in calculation.");
+                  while (sc.lookahead().getTokenType() == Token.ID || sc.lookahead().getTokenType() == Token.COMPLEMENT) { //If token after calculation token is an ID token
+                     if (sc.lookahead().getTokenType() == Token.COMPLEMENT) {
+                         sc.consume();
+                         compCheck = true;
                      }
                      // Set a new temporary variable and check if it has been used, if not declare this variable
                      tempVar1 = "$" + setCalc + "v1";
-                     tempVar2 = "$" + setCalc2 + "v2";
-                     if (!setVariables.containsKey(tempVar2)) {
-                        System.out.println("        ConfinFin " + tempVar2 + ";");
+                     if (!setVariables.containsKey(tempVar1)) {
+                        System.out.println("        ConfinFin " + tempVar1 + ";");
+                        setVariables.put(tempVar1, setVariables.get(varName));
                      }
                      //Determine calculation type from 'la' (look ahead variable that was stored further up^) and then format into expressible CofinFin calculation.
                      if (la == Token.UNION) {
                         System.out.println("        " + tempVar1 + " = " + varName+ ";");
-                        System.out.println("        " + tempVar1 + " = " + tempVar1 + ".union(" + sc.lookahead().getTokenString() + ");");
-                        sc.consume();
-                        if(sc.lookahead().getTokenType() != Token.SEMICOLON ) {
+                        if(compCheck) {
+                            System.out.println("        " + tempVar1 + " = " + tempVar1 + ".union(" + sc.lookahead().getTokenString() + ".complement());");
+                        }
+                        else {
+                            System.out.println("        " + tempVar1 + " = " + tempVar1 + ".union(" + sc.lookahead().getTokenString() + ");");
+                        }
+                            System.out.println("        " + varName + " = " + tempVar1);
+                        la = sc.lookahead().getTokenType();
+
+                        if(sc.lookahead().getTokenType() == Token.SEMICOLON ) {
                            return "$";
                         }
 
                      } else if (la == Token.INTERSECTION) {
                         System.out.println("        " + tempVar1 + " = " + varName+ ";");
-                        System.out.println("        " + tempVar1 + " = " + tempVar1 + ".intersect(" + sc.lookahead().getTokenString() + ");");
-                        sc.consume();
-                        if(sc.lookahead().getTokenType() != Token.SEMICOLON ) {
+                        if (compCheck){
+                            System.out.println("        " + tempVar1 + " = " + tempVar1 + ".intersect(" + sc.lookahead().getTokenString() + ".complement());");
+                        }else {
+                            System.out.println("        " + tempVar1 + " = " + tempVar1 + ".intersect(" + sc.lookahead().getTokenString() + ");");
+                        }
+                         System.out.println("        " + varName + " = " + tempVar1);
+                         la = sc.lookahead().getTokenType();
+                        if(sc.lookahead().getTokenType() == Token.SEMICOLON ) {
                            return "$";
                         }
-
-                     } else if (la == Token.COMPLEMENT) {
-                        System.out.println("        " + tempVar1 + " = " + varName+ ";");
-                        System.out.println("        " + tempVar1 + " = " + varName + ".complement();");
-                        sc.consume();
-                        if(sc.lookahead().getTokenType() != Token.SEMICOLON ) {
-                           return "$";
-                        }
-
                      } else if (la == Token.SETDIFFERENCE) {
                         System.out.println("        " + tempVar1 + " = " + varName + ";");
-                        System.out.println("        " + tempVar1 + " = " + tempVar1 + ".intersect(" + sc.lookahead().getTokenString() + ".complement());");
-                        sc.consume();
-                        if(sc.lookahead().getTokenType() != Token.SEMICOLON ) {
+                         if(compCheck) {
+                             System.out.println("        " + tempVar1 + " = " + tempVar1 + ".intersect(" + sc.lookahead().getTokenString() + ");");
+                         }else {
+                             System.out.println("        " + tempVar1 + " = " + tempVar1 + ".intersect(" + sc.lookahead().getTokenString() + ".complement());");
+                         }
+                         System.out.println("        " + varName + " = " + tempVar1);
+                         la = sc.lookahead().getTokenType();
+
+                        if(sc.lookahead().getTokenType() == Token.SEMICOLON ) {
                            return "$";
                         }
 
-                     }else { //Not a calculation token we're set up to handle
-                        throw new Exception("Unrecognized set calculation token.");
                      }
-                     return "$";
-                     //if it's a semi colon we have everything we need, so print. Yay!
+                      compCheck = false;
+                      sc.consume();
+                      la = sc.lookahead().getTokenType();
+                      sc.consume();
                   }
                }
                else if (la == Token.SEMICOLON) {
