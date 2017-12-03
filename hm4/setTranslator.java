@@ -79,21 +79,6 @@ public class setTranslator{
             throw new Exception("Nothing allowed after period.");
       }
 
-
-
-
-//        else {
-//            sc.consume();
-//            if(sc.lookahead().getTokenType() != Token.ID) {
-//                System.err.println("Error: must name the program");
-//                throw new Exception("");
-//            } else {
-//                String programName = sc.lookahead().getTokenString();
-//                System.out.println("public class " + programName + " {");
-//                sc.consume();
-//            }
-//        }
-
       // main loop for parsing
       while(! tokenType.equals("eof")) {
          tokenType = Token.TOKEN_LABELS[sc.lookahead().getTokenType()];
