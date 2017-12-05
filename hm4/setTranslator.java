@@ -521,7 +521,7 @@ public class setTranslator{
                }
 
                System.out.println(constructorValues.get(constructorValues.size()-1) + "});");
-               System.out.println("        " + varName + " = " + tempVar + ";");
+               System.out.println("        " + varName + " = $" + tempVar + ";");
                setVariables.put(varName, new CofinFin(Boolean.getBoolean(comp), a));
 
                //Variable to test if first run-through was printed
