@@ -106,7 +106,7 @@ public class setTranslator{
       String programName = sc.lookahead().getTokenString();
 
       // we have a program name, initialize the printwriter
-       dest = new PrintWriter(programName + ".java");
+       dest = new PrintWriter(new FileWriter(programName + ".java"), true);
 
 
       dest.println("public class " + programName + " {");
