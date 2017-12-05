@@ -305,6 +305,9 @@ public class setTranslator{
             varName = sc.lookahead().getTokenString();
             sc.consume();
             lookAheadType = sc.lookahead().getTokenType();
+         } else if(lookAheadType == Token.END) {
+             //time for end
+             break;
          }
          else
             break;
@@ -312,8 +315,8 @@ public class setTranslator{
       }
       /***************************************************************************************/
       //This now lets us know if we skipped a set assignment, this would mean that my calculation in doAssign went ary
-      if(!wasAssigned.equals(""))
-         dest.println("//Skipped some stuff...");
+      //if(!wasAssigned.equals(""))
+        // dest.println("//Skipped some stuff...");
 
       //this just skips to the end so we can have something to print.
       lookAheadType = sc.lookahead().getTokenType();
@@ -508,9 +511,8 @@ public class setTranslator{
                throw new Exception("Right brace expected.");
             sc.consume();
             la = sc.lookahead().getTokenType();
-            if (la != Token.SEMICOLON && la!= Token.END)
-               throw new Exception("Semicolon expected.");
-            sc.consume();
+            if(la == Token.SEMICOLON) sc.consume();
+            la = sc.lookahead().getTokenType();
             //if we get to here the assignment went well...print! Yay!
             //construclorValues is for the print statments
             //a is for our own internal tracking
