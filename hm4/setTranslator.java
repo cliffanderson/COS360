@@ -80,7 +80,7 @@ public class setTranslator{
       }
 
       // main loop for parsing
-      while(! tokenType.equals("eof")) {
+      /*while(! tokenType.equals("eof")) {
          tokenType = Token.TOKEN_LABELS[sc.lookahead().getTokenType()];
          String tokenStringValue = sc.lookahead().getTokenString();
 
@@ -92,6 +92,7 @@ public class setTranslator{
 
       dest.flush();
       dest.close();
+      */
    }
 
    // there should be an ID token for the program name
@@ -106,7 +107,9 @@ public class setTranslator{
       String programName = sc.lookahead().getTokenString();
 
       // we have a program name, initialize the printwriter
-       dest = new PrintWriter(new FileWriter(programName + ".java"), true);
+       File theFile = new File(programName + ".java");
+       System.err.println("Created file here: " + theFile.getAbsolutePath());
+       dest = new PrintWriter(new FileWriter(theFile), true);
 
 
       dest.println("public class " + programName + " {");
@@ -313,7 +316,8 @@ public class setTranslator{
          dest.println("//Skipped some stuff...");
 
       //this just skips to the end so we can have something to print.
-      while(lookAheadType != Token.END) {
+      lookAheadType = sc.lookahead().getTokenType();
+       while(lookAheadType != Token.END) {
          sc.consume();
          lookAheadType = sc.lookahead().getTokenType();
          if (lookAheadType == Token.EOF)
@@ -436,6 +440,8 @@ public class setTranslator{
                       compCheck = false;
                       sc.consume();
                       la = sc.lookahead().getTokenType();
+
+                      if(la == Token.END) return "";
                       sc.consume();
                   }
                }
