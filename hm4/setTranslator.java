@@ -30,7 +30,7 @@ public class setTranslator{
 
    public static void program() throws Exception {
 
-      System.out.println("program()");
+      //dest.println("program()");
 
       String tokenType = "";
 
@@ -70,8 +70,8 @@ public class setTranslator{
 
       }
       if (sc.lookahead().getTokenType() == Token.PERIOD) {
-         System.out.println("   }");
-         System.out.println("}");
+         dest.println("   }");
+         dest.println("}");
          sc.consume();
          if(sc.lookahead().getTokenType() == Token.EOF)
             sc.consume();
@@ -84,11 +84,14 @@ public class setTranslator{
          tokenType = Token.TOKEN_LABELS[sc.lookahead().getTokenType()];
          String tokenStringValue = sc.lookahead().getTokenString();
 
-         System.out.printf("Token type: %s          Token string value: %s%n",
+         dest.printf("Token type: %s          Token string value: %s%n",
                  tokenType,
                  tokenStringValue);
          sc.consume();
       }
+
+      dest.flush();
+      dest.close();
    }
 
    // there should be an ID token for the program name
@@ -102,7 +105,11 @@ public class setTranslator{
 
       String programName = sc.lookahead().getTokenString();
 
-      System.out.println("public class " + programName + " {");
+      // we have a program name, initialize the printwriter
+       dest = new PrintWriter(programName + ".java");
+
+
+      dest.println("public class " + programName + " {");
 
       //consume ID token
       sc.consume();
@@ -187,7 +194,7 @@ public class setTranslator{
       // output code to declare nat variables
 
       for(String varName : natVariables) {
-         System.out.println("    private static int " + varName + " = 0;");
+         dest.println("    private static int " + varName + " = 0;");
          naturalVariables.put(varName, 0);
       }
    }
@@ -232,14 +239,14 @@ public class setTranslator{
       // output code to declare nat variables
 
       for(String varName : privateSetVariables) {
-         System.out.println("    private static CofinFin " + varName + " = new CofinFin();");
+         dest.println("    private static CofinFin " + varName + " = new CofinFin();");
          setVariables.put(varName, null);
       }
    }
 
 
    private static void doBegin() throws Exception {
-      System.out.println("    public static void main(String[] args){");
+      dest.println("    public static void main(String[] args){");
       sc.consume(); //consume begin token
 
       TreeSet<Integer> calculationSet = new TreeSet<Integer>();
@@ -287,7 +294,7 @@ public class setTranslator{
          }
          //so if we get to here we had some sort of successful assignment
          if(!wasAssigned.equals("$")) {
-            System.out.println(wasAssigned);
+            dest.println(wasAssigned);
          }
          //we set ourselves up for the next one.
          lookAheadType = sc.lookahead().getTokenType();
@@ -303,7 +310,7 @@ public class setTranslator{
       /***************************************************************************************/
       //This now lets us know if we skipped a set assignment, this would mean that my calculation in doAssign went ary
       if(!wasAssigned.equals(""))
-         System.out.println("//Skipped some stuff...");
+         dest.println("//Skipped some stuff...");
 
       //this just skips to the end so we can have something to print.
       while(lookAheadType != Token.END) {
@@ -367,9 +374,9 @@ public class setTranslator{
                   if (sc.lookahead().getTokenType() == Token.SEMICOLON) {
                      //no need to calculate, this is just setting a CofinFin to equal another CofinFin
                       if (compCheck){
-                          System.out.println("        " + varName + " = " + tempName + ".complement();");
+                          dest.println("        " + varName + " = " + tempName + ".complement();");
                       }else {
-                          System.out.println("        " + varName + " = " + tempName + ";");
+                          dest.println("        " + varName + " = " + tempName + ";");
                       }
                   }
                   while (sc.lookahead().getTokenType() == Token.ID || sc.lookahead().getTokenType() == Token.COMPLEMENT) { //If token after calculation token is an ID token
@@ -380,19 +387,19 @@ public class setTranslator{
                      // Set a new temporary variable and check if it has been used, if not declare this variable
                      tempVar1 = "$" + setCalc + "v1";
                      if (!setVariables.containsKey(tempVar1)) {
-                        System.out.println("        ConfinFin " + tempVar1 + ";");
+                        dest.println("        ConfinFin " + tempVar1 + ";");
                         setVariables.put(tempVar1, setVariables.get(varName));
                      }
                      //Determine calculation type from 'la' (look ahead variable that was stored further up^) and then format into expressible CofinFin calculation.
                      if (la == Token.UNION) {
-                        System.out.println("        " + tempVar1 + " = " + varName+ ";");
+                        dest.println("        " + tempVar1 + " = " + varName+ ";");
                         if(compCheck) {
-                            System.out.println("        " + tempVar1 + " = " + tempVar1 + ".union(" + sc.lookahead().getTokenString() + ".complement());");
+                            dest.println("        " + tempVar1 + " = " + tempVar1 + ".union(" + sc.lookahead().getTokenString() + ".complement());");
                         }
                         else {
-                            System.out.println("        " + tempVar1 + " = " + tempVar1 + ".union(" + sc.lookahead().getTokenString() + ");");
+                            dest.println("        " + tempVar1 + " = " + tempVar1 + ".union(" + sc.lookahead().getTokenString() + ");");
                         }
-                            System.out.println("        " + varName + " = " + tempVar1);
+                            dest.println("        " + varName + " = " + tempVar1);
                         la = sc.lookahead().getTokenType();
 
                         if(sc.lookahead().getTokenType() == Token.SEMICOLON ) {
@@ -400,25 +407,25 @@ public class setTranslator{
                         }
 
                      } else if (la == Token.INTERSECTION) {
-                        System.out.println("        " + tempVar1 + " = " + varName+ ";");
+                        dest.println("        " + tempVar1 + " = " + varName+ ";");
                         if (compCheck){
-                            System.out.println("        " + tempVar1 + " = " + tempVar1 + ".intersect(" + sc.lookahead().getTokenString() + ".complement());");
+                            dest.println("        " + tempVar1 + " = " + tempVar1 + ".intersect(" + sc.lookahead().getTokenString() + ".complement());");
                         }else {
-                            System.out.println("        " + tempVar1 + " = " + tempVar1 + ".intersect(" + sc.lookahead().getTokenString() + ");");
+                            dest.println("        " + tempVar1 + " = " + tempVar1 + ".intersect(" + sc.lookahead().getTokenString() + ");");
                         }
-                         System.out.println("        " + varName + " = " + tempVar1);
+                         dest.println("        " + varName + " = " + tempVar1);
                          la = sc.lookahead().getTokenType();
                         if(sc.lookahead().getTokenType() == Token.SEMICOLON ) {
                            return "$";
                         }
                      } else if (la == Token.SETDIFFERENCE) {
-                        System.out.println("        " + tempVar1 + " = " + varName + ";");
+                        dest.println("        " + tempVar1 + " = " + varName + ";");
                          if(compCheck) {
-                             System.out.println("        " + tempVar1 + " = " + tempVar1 + ".intersect(" + sc.lookahead().getTokenString() + ");");
+                             dest.println("        " + tempVar1 + " = " + tempVar1 + ".intersect(" + sc.lookahead().getTokenString() + ");");
                          }else {
-                             System.out.println("        " + tempVar1 + " = " + tempVar1 + ".intersect(" + sc.lookahead().getTokenString() + ".complement());");
+                             dest.println("        " + tempVar1 + " = " + tempVar1 + ".intersect(" + sc.lookahead().getTokenString() + ".complement());");
                          }
-                         System.out.println("        " + varName + " = " + tempVar1);
+                         dest.println("        " + varName + " = " + tempVar1);
                          la = sc.lookahead().getTokenType();
 
                         if(sc.lookahead().getTokenType() == Token.SEMICOLON ) {
@@ -433,7 +440,7 @@ public class setTranslator{
                   }
                }
                else if (la == Token.SEMICOLON) {
-                  System.out.println("        " + varName + " = " + tempName + ";");
+                  dest.println("        " + varName + " = " + tempName + ";");
                   sc.consume();
                   setVariables.put(varName, setVariables.get(tempName));
                   return "$";
@@ -451,7 +458,7 @@ public class setTranslator{
                sc.consume();
                la = sc.lookahead().getTokenType();
                if (la == Token.SEMICOLON) {
-                  System.out.println("        " + varName + " = new CofinFin(false, " + tempName + ");");
+                  dest.println("        " + varName + " = new CofinFin(false, " + tempName + ");");
                   setVariables.put(varName, new CofinFin(false, naturalVariables.get(tempName)));
                   sc.consume();
                   return "$";
@@ -508,20 +515,20 @@ public class setTranslator{
                //if statement to test for first run-through
                if(!setVariables.containsKey(tempVar)) {
                   //changed int[] to CofinFin to match up with the example output
-                  System.out.print("        CofinFin $" + tempVar + " = new CofinFin (" + comp +
+                  dest.print("        CofinFin $" + tempVar + " = new CofinFin (" + comp +
                           ", new int[] {");
                }else{
-                  System.out.print("        " + tempVar + " = new CofinFin (" + comp +
+                  dest.print("        " + tempVar + " = new CofinFin (" + comp +
                           ", new int[] {");
                }
                int[] a = new int[constructorValues.size()];
                for (int i = 0; i < constructorValues.size()-1; i++) {
-                  System.out.print(constructorValues.get(i) + ", ");
+                  dest.print(constructorValues.get(i) + ", ");
                   a[i]=Integer.parseInt(constructorValues.get(i));
                }
 
-               System.out.println(constructorValues.get(constructorValues.size()-1) + "});");
-               System.out.println("        " + varName + " = " + tempVar + ";");
+               dest.println(constructorValues.get(constructorValues.size()-1) + "});");
+               dest.println("        " + varName + " = " + tempVar + ";");
                setVariables.put(varName, new CofinFin(Boolean.getBoolean(comp), a));
 
                //Variable to test if first run-through was printed
@@ -532,7 +539,7 @@ public class setTranslator{
                //if it's something else then something else happened...
             }
             else {
-               System.out.println("        " + varName + " = new CofinFin(" + comp + ", 0);");
+               dest.println("        " + varName + " = new CofinFin(" + comp + ", 0);");
                setVariables.put(varName, new CofinFin(Boolean.getBoolean(comp), 0));
                return "$";
             }
@@ -571,7 +578,7 @@ public class setTranslator{
          else
             throw new Exception("Constant value expected.");
          //if we get to here we have had a var name, assigned to a constant or var so we can print
-         System.out.println("        " + varName + " = " + natValue + ";");
+         dest.println("        " + varName + " = " + natValue + ";");
          naturalVariables.put(varName, Integer.getInteger(natValue));
          sc.consume();
          la = sc.lookahead().getTokenType();
@@ -597,10 +604,10 @@ public class setTranslator{
       if (la == Token.ID) {
          String varName = sc.lookahead().getTokenString();
          if(setVariables.containsKey(varName) && setVariables.get(varName) != null) {
-            System.out.println("        System.out.println(" + varName + ".toString());");
+            dest.println("        System.out.println(" + varName + ".toString());");
          }
          else if (naturalVariables.containsKey(varName) && naturalVariables.get(varName) != null) {
-            System.out.println("        System.out.println(" + varName + ");");
+            dest.println("        System.out.println(" + varName + ");");
          }
          else
             throw new Exception("Variable " + varName + "may not have been declared or assigned.");
@@ -612,8 +619,8 @@ public class setTranslator{
          int la2 = sc.lookahead().getTokenType();
          //checks to see if it's just an empty set
          if(la2 == Token.RIGHTBRACE){
-            System.out.println("        CofinFin $sv1 = new CofinFin(false, new int[] {});");
-            System.out.println("        System.out.println($sv1.toString());");
+            dest.println("        CofinFin $sv1 = new CofinFin(false, new int[] {});");
+            dest.println("        System.out.println($sv1.toString());");
          }
          if(la2 != Token.RIGHTBRACE)
             throw new Exception("Right brace expected.");
@@ -626,8 +633,8 @@ public class setTranslator{
             int la3 = sc.lookahead().getTokenType();
             if (la3 == Token.RIGHTBRACE){
                sc.consume();
-               System.out.println("        CofinFin $sv1 = new CofinFin(true, new int[] {});");
-               System.out.println("        System.out.println($sv1.toString());");
+               dest.println("        CofinFin $sv1 = new CofinFin(true, new int[] {});");
+               dest.println("        System.out.println($sv1.toString());");
             }
          }
 
