@@ -382,6 +382,7 @@ public class setTranslator{
                       }else {
                           dest.println("        " + varName + " = " + tempName + ";");
                       }
+                      return "$";
                   }
                   while (sc.lookahead().getTokenType() == Token.ID || sc.lookahead().getTokenType() == Token.COMPLEMENT) { //If token after calculation token is an ID token
                      if (sc.lookahead().getTokenType() == Token.COMPLEMENT) {
