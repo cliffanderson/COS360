@@ -511,7 +511,7 @@ public class setTranslator{
                   System.out.print("        CofinFin $" + tempVar + " = new CofinFin (" + comp +
                           ", new int[] {");
                }else{
-                  System.out.print("        " + tempVar + " = new CofinFin (" + comp +
+                  System.out.print("        $" + tempVar + " = new CofinFin (" + comp +
                           ", new int[] {");
                }
                int[] a = new int[constructorValues.size()];
