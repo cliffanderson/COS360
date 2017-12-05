@@ -502,7 +502,7 @@ public class setTranslator{
                throw new Exception("Right brace expected.");
             sc.consume();
             la = sc.lookahead().getTokenType();
-            if (la != Token.SEMICOLON)
+            if (la != Token.SEMICOLON && la!= Token.END)
                throw new Exception("Semicolon expected.");
             sc.consume();
             //if we get to here the assignment went well...print! Yay!
@@ -518,7 +518,7 @@ public class setTranslator{
                   dest.print("        CofinFin $" + tempVar + " = new CofinFin (" + comp +
                           ", new int[] {");
                }else{
-                  dest.print("        " + tempVar + " = new CofinFin (" + comp +
+                  dest.print("        $" + tempVar + " = new CofinFin (" + comp +
                           ", new int[] {");
                }
                int[] a = new int[constructorValues.size()];
@@ -527,8 +527,9 @@ public class setTranslator{
                   a[i]=Integer.parseInt(constructorValues.get(i));
                }
 
+
                dest.println(constructorValues.get(constructorValues.size()-1) + "});");
-               dest.println("        " + varName + " = " + tempVar + ";");
+               dest.println("        " + varName + " = $" + tempVar + ";");
                setVariables.put(varName, new CofinFin(Boolean.getBoolean(comp), a));
 
                //Variable to test if first run-through was printed
