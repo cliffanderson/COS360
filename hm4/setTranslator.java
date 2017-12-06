@@ -394,10 +394,6 @@ public class setTranslator{
                      }
                      // Set a new temporary variable and check if it has been used, if not declare this variable
                      tempVar1 = "$" + setCalc + "v1";
-                     if (!setVariables.containsKey(tempVar1)) {
-                        dest.println("        ConfinFin " + tempVar1 + ";");
-                        setVariables.put(tempVar1, setVariables.get(varName));
-                     }
                      //Determine calculation type from 'la' (look ahead variable that was stored further up^) and then format into expressible CofinFin calculation.
                      if (la == Token.UNION) {
                         dest.println("        " + tempVar1 + " = " + varName+ ";");
