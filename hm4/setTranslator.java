@@ -393,7 +393,7 @@ public class setTranslator{
                          compCheck = true;
                      }
                      // Set a new temporary variable and check if it has been used, if not declare this variable
-                     tempVar1 = "$" + setCalc + "v1";
+                     tempVar1 = "$sv1";
                      //Determine calculation type from 'la' (look ahead variable that was stored further up^) and then format into expressible CofinFin calculation.
                      if (la == Token.UNION) {
                         dest.println("        " + tempVar1 + " = " + varName+ ";");
@@ -440,8 +440,13 @@ public class setTranslator{
                       compCheck = false;
                       sc.consume();
                       la = sc.lookahead().getTokenType();
-
-                      if(la == Token.END) return "";
+                      if(la == Token.SEMICOLON){
+                         sc.consume();
+                         return "$";
+                      }
+                      if(la == Token.END){
+                         return "";
+                      }
                       sc.consume();
                   }
                }
