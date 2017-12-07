@@ -403,7 +403,7 @@ public class setTranslator{
                         else {
                             dest.println("        " + tempVar1 + " = " + tempVar1 + ".union(" + sc.lookahead().getTokenString() + ");");
                         }
-                            dest.println("        " + varName + " = " + tempVar1);
+                            dest.println("        " + varName + " = " + tempVar1 + ";");
                         la = sc.lookahead().getTokenType();
 
                         if(sc.lookahead().getTokenType() == Token.SEMICOLON ) {
@@ -417,7 +417,7 @@ public class setTranslator{
                         }else {
                             dest.println("        " + tempVar1 + " = " + tempVar1 + ".intersect(" + sc.lookahead().getTokenString() + ");");
                         }
-                         dest.println("        " + varName + " = " + tempVar1);
+                         dest.println("        " + varName + " = " + tempVar1  + ";");
                          la = sc.lookahead().getTokenType();
                         if(sc.lookahead().getTokenType() == Token.SEMICOLON ) {
                            return "$";
@@ -429,7 +429,7 @@ public class setTranslator{
                          }else {
                              dest.println("        " + tempVar1 + " = " + tempVar1 + ".intersect(" + sc.lookahead().getTokenString() + ".complement());");
                          }
-                         dest.println("        " + varName + " = " + tempVar1);
+                         dest.println("        " + varName + " = " + tempVar1  + ";");
                          la = sc.lookahead().getTokenType();
 
                         if(sc.lookahead().getTokenType() == Token.SEMICOLON ) {
