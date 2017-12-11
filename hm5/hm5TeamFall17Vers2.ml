@@ -53,14 +53,18 @@ both f x and g y are true.
 
 fun somePairWorks f g L =
    if null L then
-      true
+      false 
    else
       let
          val (a,b) = hd L
-         val x = false andalso g b
-         val y = false andalso f a
+         val x = f a
+         val y = g b
+         val z = x andalso y
       in
-         true
+         if z = true then
+		true
+	 else
+            somePairWorks f g (tl L)
       end;
 
 (*  a few test cases *)
@@ -89,11 +93,17 @@ somePairWorks (fn s => s <> "")(fn n => n = 0) [("", ~1), ("", 0), ("a", 2), (""
 
 fun worksForAll f L =
    if null L then
-      false
+      true
    else
-      f (hd L)
-;
-
+      let
+        val a = hd L;
+        val x = f a; 
+      in
+        if x = false then
+               false
+        else
+           worksForAll f (tl L)
+      end;  
 
 (* some test cases *)
 
