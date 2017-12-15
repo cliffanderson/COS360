@@ -147,7 +147,7 @@ fun someListWorks f L =
       false                                        (* Should be false if no lists are in the list L *)
    else
       let
-         val firstOnL = hd L        
+         val firstOnL = hd L                       (* First list from the list L *)
       in
          if worksForAll f ( firstOnL) = true then  (* If the first list maps to all true, then we're done and we return true *)
            true   
