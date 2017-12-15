@@ -241,9 +241,7 @@ emptiness of the whole expression.
 
 *)
 
-fun isEmpty f RE = 
-		if null RE then                      	(* if list is empty return true *)
-			true
+fun isEmpty [] = true | isEmpty RE =
 		let 
 			firstElement = hd RE
 			emptyString = ""		
