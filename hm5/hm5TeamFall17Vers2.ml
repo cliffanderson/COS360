@@ -142,31 +142,18 @@ Hint: recurse on L with the worksForAll function and f.
 
 *)
 
-
-
-
-
 fun someListWorks f L =
    if null L then
-      true
+      false                                        (* Should be false if no lists are in the list L *)
    else
       let
-         val firstOnL = hd L
-         val isEmt = null firstOnL
-         val didItWork = false
+         val firstOnL = hd L        
       in
-         if not isEmt then
-            let
-                val didItWork = worksForAll f (hd L)
-            in
-                if didItWork = true then
-                    true
-                else
-                    someListWorks f (tl L)
-    true
-
-
-
+         if worksForAll f ( firstOnL) = true then  (* If the first list maps to all true, then we're done and we return true *)
+           true   
+         else                                      (* Else we move on to the next list *)
+            someListWorks f (tl L)
+      end;
 
 (*
 
