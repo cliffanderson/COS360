@@ -138,7 +138,13 @@ that f maps every value on it to true.
 
 Hint: recurse on L with the worksForAll function and f.
 
+
+
 *)
+
+
+
+
 
 fun someListWorks f L =
    if null L then
@@ -147,12 +153,20 @@ fun someListWorks f L =
       let
          val firstOnL = hd L
          val isEmt = null firstOnL
+         val didItWork = false
       in
          if not isEmt then
-            f (hd firstOnL)
-         else
-            true
-      end;
+            let
+                val didItWork = worksForAll f (hd L)
+            in
+                if didItWork = true then
+                    true
+                else
+                    someListWorks f (tl L)
+    true
+
+
+
 
 (*
 
