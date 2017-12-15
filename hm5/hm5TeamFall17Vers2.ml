@@ -241,8 +241,18 @@ emptiness of the whole expression.
 
 *)
 
-fun isEmpty emptyset = true |
-    isEmpty   _ = false
+fun isEmpty f RE = 
+		if null RE then                      	(* if list is empty return true *)
+			true
+		let 
+			firstElement = hd RE
+			emptyString = ""		
+		in
+			if firstElement = emptyString	(* if first string is empty *)
+				isEmpty(tl RE)		(* call isEmpty on RE minus first element *)
+			else 
+				false			(*if the string wasn't empty return false *)
+		end
 ;
 
 (* some tests *)
