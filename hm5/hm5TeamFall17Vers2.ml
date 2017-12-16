@@ -365,12 +365,8 @@ It's a little tricky.
 *)
 
 fun containsMoreThanLambda (emptyset) = false
-| containsMoreThanLambda (atom(x)) =
-    if x = #" " then
-        false
-    else
-        true
-| containsMoreThanLambda (conc(x,y)) = containsMoreThanLambda x orelse containsMoreThanLambda y
+| containsMoreThanLambda (atom _) = true
+| containsMoreThanLambda (conc(x,y)) = containsMoreThanLambda x andalso containsMoreThanLambda y
 | containsMoreThanLambda (union(x,y)) = containsMoreThanLambda x orelse containsMoreThanLambda y
 | containsMoreThanLambda (star(x)) = containsMoreThanLambda x
 
