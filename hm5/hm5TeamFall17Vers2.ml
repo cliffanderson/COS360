@@ -425,8 +425,11 @@ Clearly, the basis cases are not infinite.
 *)
 
 
-fun isInfinite emptyset = true |
-    isInfinite   _ = false
+fun isInfinite (emptyset) = false
+|   isInfinite (atom _) = false
+|   isInfinite (star _) = true
+|   isInfinite (union(x,y)) = isInfinite x orelse isInfinite y
+|   isInfinite (conc(x,y)) = isInfinite x orelse isInfinite y
 ;
 
 (* some tests *)
