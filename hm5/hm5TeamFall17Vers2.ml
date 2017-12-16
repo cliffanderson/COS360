@@ -551,11 +551,14 @@ making a recursive call if it cannot work.
 fun isIn emptyset s = false | (* replace with the obvious correct value;
                                   how many strings s are in the empty set? *)
 
-      isIn (atom c) s =   
-		if (c = (hd (explode s))) = true andalso ((tl (explode s)) = []) = true then
-			true
-		else
+      isIn (atom c) s = 
+		if s = "" = true then
 			false
+		else
+			if c = hd (explode s) andalso size s = 1 then
+				true
+			else
+				false
 								| (* here you need to test that s is one character and that
                                      character is same as c; (hd (explode s)) will give you the
                                      first character of s as a char value, provided s is not ""
@@ -566,23 +569,29 @@ fun isIn emptyset s = false | (* replace with the obvious correct value;
 								| (* basic logic: x is in the union of A and B iff ... *)
 
       isIn (conc (e1,e2)) s =
-		if (s = "") = true orelse ((isEmpty e1) andalso (isEmpty e2)) then 
-			false (* is the empty string in the the empty string???  *)
-		else 
-			if ((isIn e1 s) orelse (isIn e2 s)) = true then	
-					true
+		if isEmpty e1 andalso isEmpty e2 then 
+			false 
+		else
+			if (size s = 0) andalso (isIn e1 s andalso isIn e2 s) then
+				true
 			else
-				if (size s < 2) = true then
+				if (size s = 0) andalso (isEmpty e1 <> true orelse isEmpty e2 <> true) then
 					false
 				else
-					let
-						val subs = allTwoSplits s						
-					in
-						if (somePairWorks (isIn e1) (isIn e2) subs) = true then
+					if isIn e1 s orelse isIn e2 s then	
 							true
-						else
+					else
+						if (size s < 2) = true then
 							false
-					end  
+						else
+							let
+								val subs = allTwoSplits s						
+							in
+								if (somePairWorks (isIn e1) (isIn e2) subs) = true then
+									true
+								else
+									false
+							end  
 	  | 
          (*
             The plot thickens!  By definition, s is in (e1)(e2) iff s can be split in two pieces
@@ -598,7 +607,24 @@ fun isIn emptyset s = false | (* replace with the obvious correct value;
             of all the (x,y) pairs of breaks of s, and your somePairWorks function from above, with
             (isIn e1), (isIn e2) and the list of the (x,y) pairs.
          *)
-      isIn (eStar as (star e)) s = true 
+      isIn (eStar as (star e)) s = 
+		if s = "" then
+			true
+		else
+			if isIn e s then
+				true
+			else
+				if (size s = 1) = true then
+					false
+				else
+					let
+						val subs = allTwoSplits s						
+					in
+						if (somePairWorks (isIn eStar) (isIn eStar) subs) = true then
+							true
+						else
+							false
+					end  
        (* 
           Like the last, only a little more complicated since the breakdowns can be into more than
           two pieces.
