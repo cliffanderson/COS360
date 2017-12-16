@@ -244,9 +244,8 @@ emptiness of the whole expression.
 fun isEmpty (emptyset) = true
 |   isEmpty (atom _) = false
 |   isEmpty (star _) = false
-|   isEmpty (conc(x,y)) = isEmpty x andalso isEmpty y
+|   isEmpty (conc(x,y)) = isEmpty x orelse isEmpty y
 |   isEmpty (union(x,y)) = isEmpty x andalso isEmpty y
-
 
 ;
 
