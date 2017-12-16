@@ -241,12 +241,13 @@ emptiness of the whole expression.
 
 *)
 
-fun isEmpty [] = true | isEmpty RE =
+fun isEmpty [] = true | 
+    isEmpty RE =
 		let 
-			firstElement = hd RE
-			emptyString = ""		
+			val firstElement = hd RE
+			val emptyString = ""		
 		in
-			if firstElement = emptyString	(* if first string is empty *)
+			if firstElement = emptyString then	(* if first string is empty *)
 				isEmpty(tl RE)		(* call isEmpty on RE minus first element *)
 			else 
 				false			(*if the string wasn't empty return false *)
