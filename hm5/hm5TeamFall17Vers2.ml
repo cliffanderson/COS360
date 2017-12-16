@@ -241,17 +241,13 @@ emptiness of the whole expression.
 
 *)
 
-fun isEmpty [] = true | 
-    isEmpty RE =
-		let 
-			val firstElement = hd RE
-			val emptyString = ""		
-		in
-			if firstElement = emptyString then	(* if first string is empty *)
-				isEmpty(tl RE)		(* call isEmpty on RE minus first element *)
-			else 
-				false			(*if the string wasn't empty return false *)
-		end
+fun isEmpty (emptyset) = true
+|   isEmpty (atom _) = false
+|   isEmpty (star _) = false
+|   isEmpty (conc(x,y)) = isEmpty x andalso isEmpty y
+|   isEmpty (union(x,y)) = isEmpty x andalso isEmpty y
+
+
 ;
 
 (* some tests *)
