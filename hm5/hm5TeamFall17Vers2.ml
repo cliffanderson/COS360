@@ -364,9 +364,12 @@ It's a little tricky.
 
 *)
 
+fun containsMoreThanLambda (emptyset) = false
+| containsMoreThanLambda (atom _) = true
+| containsMoreThanLambda (conc(x,y)) = containsMoreThanLambda x andalso containsMoreThanLambda y
+| containsMoreThanLambda (union(x,y)) = containsMoreThanLambda x orelse containsMoreThanLambda y
+| containsMoreThanLambda (star(x)) = containsMoreThanLambda x
 
-fun containsMoreThanLambda emptyset = true |
-    containsMoreThanLambda   _ = false
 ;
 
 (* some tests *)
@@ -548,66 +551,103 @@ making a recursive call if it cannot work.
 *)
 
 
-fun isIn emptyset s = s = "" | (* replace with the obvious correct value;
+fun isIn emptyset s = false | (* replace with the obvious correct value;
                                   how many strings s are in the empty set? *)
 
-      isIn (atom c) s   =  true | (* here you need to test that s is one character and that
+      isIn (atom c) s = 
+		if s = "" = true then
+			false
+		else
+			if c = hd (explode s) andalso size s = 1 then
+				true
+			else
+				false
+								| (* here you need to test that s is one character and that
                                      character is same as c; (hd (explode s)) will give you the
                                      first character of s as a char value, provided s is not ""
                                    *)
 
-      isIn (union (e1,e2)) s = true | (* basic logic: x is in the union of A and B iff ... *)
+      isIn (union (e1,e2)) s = 
+		isIn e1 s orelse isIn e2 s		
+								| (* basic logic: x is in the union of A and B iff ... *)
 
-
-      isIn (conc (e1,e2)) s = true | 
+      isIn (conc (e1,e2)) s =
+		if isEmpty e1 andalso isEmpty e2 then 
+			false 
+		else
+			if (size s = 0) andalso (isIn e1 s andalso isIn e2 s) then
+				true
+			else
+				if (size s = 0) andalso (isEmpty e1 <> true orelse isEmpty e2 <> true) then
+					false
+				else
+					if isIn e1 s orelse isIn e2 s then	
+							true
+					else
+						if (size s < 2) = true then
+							false
+						else
+							let
+								val subs = allTwoSplits s						
+							in
+								if (somePairWorks (isIn e1) (isIn e2) subs) = true then
+									true
+								else
+									false
+							end  
+	  | 
          (*
-
             The plot thickens!  By definition, s is in (e1)(e2) iff s can be split in two pieces
             x and y such that xy = s and x is in e1 and y is in e2.  We want to deal the anomalous
             cases where any of x or y or s is the empty string
-
             s is empty: you will need use the containsLambda function you defined; when is
                         the empty string in conc (e1,e2)?
-
             x is empty:  check if e1 contains Lambda and s (which equals y when x is "") is in e2
-
             y is empty: the mirror image of the previous case
-
             With those cases considered, if none of them put s in conc(e1,e2), then we must split
             s into two nonempty pieces x and y such that x is in e1 and y is in e2.  If length of s
             is < 2, this is impossible, so return false.  Otherwise use allTwoSplits to get a list
             of all the (x,y) pairs of breaks of s, and your somePairWorks function from above, with
             (isIn e1), (isIn e2) and the list of the (x,y) pairs.
-
          *)
-      isIn (eStar as (star e)) s = true 
+      isIn (eStar as (star e)) s = 
+		if s = "" then
+			true
+		else
+			if isIn e s then
+				true
+			else
+				if (size s = 1) = true then
+					false
+				else
+					let
+						val subs = allTwoSplits s						
+					in
+						if (somePairWorks (isIn eStar) (isIn eStar) subs) = true then
+							true
+						else
+							false
+					end  
        (* 
-
           Like the last, only a little more complicated since the breakdowns can be into more than
           two pieces.
-
           Clearly, if  s = "" then the answer is true.  Also, if s is in the language of e, then it
           is in  e*, and that should be checked next.
-
           If neither of those cases shows s in (star e), and the length of s is 1, then s cannot
           be in (star e), because it cannot be broken into pieces, so return false.
-
           Once those cases have been dealt with and do not resolve the issue, you can use allTwoSplits
           to obtain a list of all the ways to split s into a pair of non-empty strings, (x, y).   For
           such a pair,  
-
           if (isIn e x) then 
              if (isIn (star e) y) then
                 true
              else
                 recurse on the list of the pairs
-
           will be a more efficient approach than I suggested before, as it stops the expansion when
           x in not in e. For a length n > 1 string s, there will be n-1 ways to break it into pairs, 
           but 2^(n-1) - 1 ways to split it into >= 2 nonempty strings whose concatenation is s.  
           There may be some where this alternative is still not efficient, but my solution is running
           much more quickly with this version
-
           With a judicious choice of the f and g functions to pass in, somePairWorks should be just
           the ticket for this one, too.
        *)
