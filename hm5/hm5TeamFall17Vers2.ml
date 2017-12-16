@@ -364,9 +364,16 @@ It's a little tricky.
 
 *)
 
+fun containsMoreThanLambda (emptyset) = false
+| containsMoreThanLambda (atom(x)) =
+    if x = #" " then
+        false
+    else
+        true
+| containsMoreThanLambda (conc(x,y)) = containsMoreThanLambda x orelse containsMoreThanLambda y
+| containsMoreThanLambda (union(x,y)) = containsMoreThanLambda x orelse containsMoreThanLambda y
+| containsMoreThanLambda (star(x)) = containsMoreThanLambda x
 
-fun containsMoreThanLambda emptyset = true |
-    containsMoreThanLambda   _ = false
 ;
 
 (* some tests *)
