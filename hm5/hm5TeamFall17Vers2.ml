@@ -300,8 +300,15 @@ on Lambda being in the subexpressions?
 *)
 
 
-fun containsLambda emptyset = true |
-    containsLambda   _ = false
+fun containsLambda (emptyset) = false
+| containsLambda (atom _) = false
+| containsLambda (conc (x,y)) =
+    if containsLambda x = true then
+     true
+     else containsLambda y
+| containsLambda (union(x,y)) = containsLambda x andalso containsLambda y
+| containsLambda (star _) = true
+
 ;
 
 (* some tests *)
