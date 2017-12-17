@@ -435,7 +435,11 @@ fun isInfinite (emptyset) = false
                           else
                             true
 |   isInfinite (union(x,y)) = isInfinite x orelse isInfinite y
-|   isInfinite (conc(x,y)) = isInfinite x orelse isInfinite y
+|   isInfinite (conc(x,y)) =
+                            if isEmpty x orelse isEmpty y then
+                                   false
+                            else
+                                isInfinite x orelse isInfinite y
 ;
 
 (* some tests *)
