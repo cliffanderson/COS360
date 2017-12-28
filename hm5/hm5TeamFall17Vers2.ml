@@ -430,7 +430,10 @@ fun isInfinite (emptyset) = false
 |   isInfinite (star x) = if isEmpty x then
                             false
                           else
-                            true
+			     if containsMoreThanLambda x then
+				true
+			      else
+				false
 |   isInfinite (union(x,y)) = isInfinite x orelse isInfinite y
 |   isInfinite (conc(x,y)) =
                             if isEmpty x orelse isEmpty y then
