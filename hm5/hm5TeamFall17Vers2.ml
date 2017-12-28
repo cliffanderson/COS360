@@ -57,11 +57,8 @@ fun somePairWorks f g L =
    else
       let
          val (a,b) = hd L
-         val x = f a
-         val y = g b
-         val z = x andalso y
       in
-         if z = true then
+         if f a andalso g b then
 		true
 	 else
             somePairWorks f g (tl L)
@@ -561,8 +558,8 @@ making a recursive call if it cannot work.
 fun isIn emptyset s = false | (* replace with the obvious correct value;
                                   how many strings s are in the empty set? *)
 
-      isIn (atom c) s = 
-		if s = "" = true then
+    isIn (atom c) s = 
+		if s = "" then
 			false
 		else
 			if c = hd (explode s) andalso size s = 1 then
@@ -579,29 +576,26 @@ fun isIn emptyset s = false | (* replace with the obvious correct value;
 								| (* basic logic: x is in the union of A and B iff ... *)
 
       isIn (conc (e1,e2)) s =
-		if isEmpty e1 andalso isEmpty e2 then 
-			false 
+		if (size s = 0) andalso containsLambda e1 andalso containsLambda e2 then
+			true
 		else
-			if (size s = 0) andalso (isIn e1 s andalso isIn e2 s) then
+			if containsLambda e1 andalso isIn e2 s then
 				true
 			else
-				if (size s = 0) andalso (isEmpty e1 <> true orelse isEmpty e2 <> true) then
-					false
+				if containsLambda e2 andalso isIn e1 s then
+					true
 				else
-					if isIn e1 s orelse isIn e2 s then	
-							true
+					if (size s < 2) = true then
+						false
 					else
-						if (size s < 2) = true then
-							false
-						else
-							let
-								val subs = allTwoSplits s						
-							in
-								if (somePairWorks (isIn e1) (isIn e2) subs) = true then
-									true
-								else
-									false
-							end  
+						let
+							val subs = allTwoSplits s						
+						in
+							if (somePairWorks (isIn e1) (isIn e2) subs) = true then
+								true
+							else
+								false
+						end  
 	  | 
          (*
             The plot thickens!  By definition, s is in (e1)(e2) iff s can be split in two pieces
@@ -628,7 +622,7 @@ fun isIn emptyset s = false | (* replace with the obvious correct value;
 					false
 				else
 					let
-						val subs = allTwoSplits s						
+						val subs = allTwoSplits s
 					in
 						if (somePairWorks (isIn eStar) (isIn eStar) subs) = true then
 							true
