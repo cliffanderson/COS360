@@ -712,7 +712,7 @@ isIn inffirstEmpty "aaaaaaaaaab";
 isIn infsecondEmpty "aaaaaaaaaab";      
 isIn infleftConcEmpty "aaaaaaaaaab";      
 isIn infrightConcEmpty "aaaaaaaaaab";      
-isIn aStar "aaaaaaaaaab";      
+isIn aStar "aaaaaaaaaab";   
 
 
 val test2 = [
@@ -1139,7 +1139,6 @@ fun identifyErrorIndices (n:int) L1 L2 =
 
 identifyErrorIndices 1 (map (isIn FloatingPoint) test2) test2CorrectResults;
 
-
 (*
 
 
@@ -1339,22 +1338,103 @@ fun matcherGenerator (c:char) =
 
 *)
 
+
 fun
-   S clist = clist
+	S clist = 
+		if null clist then
+			raise parserFailure
+		else
+			if hd clist = #"(" then
+				matcherGenerator #"$" (L clist)
+			else 
+				raise parserFailure
 and
-   L clist = clist
+	L clist = 
+		if null clist then
+			raise parserFailure
+		else
+			X (matcherGenerator #"(" clist)
 and
-   X clist = clist
+	X clist = 
+		if null clist then
+			raise parserFailure
+		else
+			let
+				val lookahead = hd clist
+			in 
+				if lookahead = #"(" orelse lookahead = #"0" orelse lookahead = #"1" then
+					Q clist
+				else
+					Q (matcherGenerator #")" clist)
+			end
 and
-   Q clist = clist
+	Q clist = 
+		if null clist then
+			raise parserFailure
+		else
+			let
+				val lookahead = hd clist
+			in 
+				if lookahead = #"(" orelse lookahead = #"0" orelse lookahead = #"1" then
+					E clist
+				else
+					if lookahead = #")" orelse lookahead = #"," then
+						W clist
+					else
+						clist
+			end
 and
-   E clist = clist
+	E clist =
+		if null clist then
+			raise parserFailure
+		else
+			let
+				val lookahead = hd clist
+			in 
+				if lookahead = #"(" then
+					L clist
+				else
+					if lookahead = #"0" orelse lookahead = #"1" then
+						N clist
+					else
+						raise parserFailure
+			end
 and
-   W clist = clist
+	W clist =
+		if null clist then
+			raise parserFailure
+		else
+			if hd clist = #")" then
+				Q (matcherGenerator #")" clist)
+			else
+				Q (matcherGenerator #" " (matcherGenerator #"," clist))
+
 and
-   N clist = clist
+	N clist =
+		if null clist then
+			raise parserFailure
+		else
+			if hd clist = #"0" then
+				W (matcherGenerator #"0" clist)
+			else
+				B (matcherGenerator #"1" clist)
 and
-   B clist = clist
+	B clist =
+		if null clist then
+			raise parserFailure
+		else
+			let
+				val lookahead = hd clist
+			in
+				if lookahead = #"1" then
+					B (matcherGenerator #"1" clist)
+					else 
+						if lookahead = #"0" then
+							B (matcherGenerator #"0" clist)
+						else
+							W clist
+			end
+		
 ;
 
 
