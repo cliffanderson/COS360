@@ -360,10 +360,16 @@ to contain a nonempty string?
 It's a little tricky.
 
 *)
-
 fun containsMoreThanLambda (emptyset) = false
 | containsMoreThanLambda (atom _) = true
-| containsMoreThanLambda (conc(x,y)) = containsMoreThanLambda x andalso containsMoreThanLambda y
+| containsMoreThanLambda (conc(x,y)) = 
+	if isEmpty x orelse isEmpty y then
+		false
+	else 
+		if (containsMoreThanLambda x andalso containsLambda y) orelse (containsMoreThanLambda y andalso containsLambda x) orelse (containsMoreThanLambda x andalso containsMoreThanLambda y) then
+			true
+		else
+			false
 | containsMoreThanLambda (union(x,y)) = containsMoreThanLambda x orelse containsMoreThanLambda y
 | containsMoreThanLambda (star(x)) = containsMoreThanLambda x
 
